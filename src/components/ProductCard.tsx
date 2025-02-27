@@ -47,7 +47,7 @@ export function ProductCard() {
      return (
           <>
                <AnimatePresence>
-                    <div className="flex w-full min-h-screen  justify-around px-14">
+                    <div className="flex w-full  mt-20  justify-around px-14">
                          {products.map((product, index) => (
                               <motion.div
                                    key={index}
