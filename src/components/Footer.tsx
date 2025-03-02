@@ -78,7 +78,7 @@ function Footer() {
                                         ease: "easeOut",
                                         delay: 0.5,
                                    }}
-                                   className="w-1/2 "
+                                   className="md:w-1/2 w-full "
                               >
                                    <Separator className="h-[1px] bg-emerald-500 w-full" />
                               </motion.div>

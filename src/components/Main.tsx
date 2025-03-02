@@ -40,7 +40,7 @@ const Main = () => {
                >
                     <motion.h1
                          variants={childVariants}
-                         className="text-5xl font-bold text-sky-500 leading-tight"
+                         className=" text-4xl  md:text-5xl font-bold text-sky-500 leading-tight"
                     >
                          Poultry Management System with E-Commerce{" "}
                          <span className="text-emerald-500">
@@ -57,10 +57,10 @@ const Main = () => {
 
                     <motion.p
                          variants={childVariants}
-                         className="text-md mt-8 text-gray-400 font-semi-bold"
+                         className="text-sm  md:text-md mt-8 text-gray-400 from-neutral-500"
                     >
                          Streamline your poultry business with smart inventory,
-                         sales tracking, and online ordering <br /> all in one
+                         sales tracking, <br /> and online ordering all in one
                          platform.
                     </motion.p>
 
