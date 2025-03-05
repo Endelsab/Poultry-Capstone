@@ -12,9 +12,12 @@ model Customer {
   fullName     String
   email        String @unique @db.Text
   mobileNumber String @unique
-  password     String
+  address      String
+
+  clerkId String @unique
 
   orders Order[]
+  cart   Cart[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -26,18 +29,26 @@ model Product {
   productName String
   productSize String
   productQty  Int
+  stock       Int     @default(0)
+  price       Decimal @default(0.0)
 
   orders Order[]
+  cart   Cart[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Admin {
-  id       String @id @default(cuid())
-  fullName String
-  email    String @unique @db.Text
-  password String
+model Cart {
+  id String @id @default(cuid())
+
+  customerId String
+  productId  String
+  quantity   Int
+  totalPrice Decimal @default(0.0)
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -49,8 +60,9 @@ model Order {
   customerId String
   productId  String
 
-  quantity Int
-  status   OrderStatus @default(PENDING)
+  quantity   Int
+  status     OrderStatus @default(PENDING)
+  totalPrice Decimal     @default(0.0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
