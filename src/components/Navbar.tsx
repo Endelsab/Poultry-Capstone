@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Modetoggle } from "./Modetoggle";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Separator } from "./ui/separator";
 import {
@@ -19,13 +19,14 @@ import { BsCart3 } from "react-icons/bs";
 
 const Navbar = () => {
      const { user } = useUser();
-
      const [role, setRole] = useState<string>("");
 
      useEffect(() => {
           if (user) {
-               const userRole = user.publicMetadata.role as string;
+               const userRole = user.publicMetadata?.role as string;
                setRole(userRole || "customer");
+          } else {
+               setRole("");
           }
      }, [user]);
 
@@ -82,13 +83,16 @@ const Navbar = () => {
                          )}
 
                          <Link href="/">
-                              <Button variant="outline" className="border-none mr-2">
+                              <Button
+                                   variant="outline"
+                                   className="border-none mr-2"
+                              >
                                    Home
                               </Button>
                          </Link>
 
                          <SignedIn>
-                              <UserButton  />
+                              <UserButton />
                          </SignedIn>
 
                          <SignedOut>
