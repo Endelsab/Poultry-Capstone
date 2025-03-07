@@ -2,7 +2,7 @@ import Footer from "@/components/Footer";
 import Main from "@/components/Main";
 import { ProductCard } from "@/components/ProductCard";
 import { currentUser } from "@clerk/nextjs/server";
-import { SyncUser } from "./actions/costumer/costumer";
+import { SyncUser } from "./actions/costumer/SyncUser";
 
 export default async function Home() {
      const user = await currentUser();

@@ -1,17 +1,12 @@
-import { checkRole } from "@/utils/roles";
-import { redirect } from "next/navigation";
+import Sidebar from "@/components/Sidebar";
 
 export default async function AdminDashboard() {
-     // Protect the page from users who are not admins
-     const isAdmin = await checkRole("admin");
-     if (!isAdmin) {
-          redirect("/");
-     }
-
      return (
-          <p>
-               This is the protected admin dashboard restricted to users with
-               the `admin` role.
-          </p>
+          <div className="flex flex-row gap-14  p-12">
+               <div className="basis-1/3 size-full ">
+                    <Sidebar />
+               </div>
+               <div className="basis-2/3 size-full bg-sky-500">r323r3r</div>
+          </div>
      );
 }

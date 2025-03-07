@@ -63,11 +63,17 @@ model Order {
   status     OrderStatus @default(PENDING)
   totalPrice Decimal     @default(0.0)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // Order-specific user dynamic details (instead of relying on User model)
+  fullName    String
+  email       String @db.Text
+  phoneNumber String
+  address     String
 
   users   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum OrderStatus {

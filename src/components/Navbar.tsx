@@ -56,7 +56,7 @@ const Navbar = () => {
                               <Link href="/admin">
                                    <Button
                                         variant="outline"
-                                        className="border-none"
+                                        className="border-none hover:scale-105"
                                    >
                                         Dashboard
                                    </Button>
@@ -66,7 +66,7 @@ const Navbar = () => {
                          {role === "customer" && (
                               <Button
                                    variant={"outline"}
-                                   className="border-none "
+                                   className="border-none hover:scale-110 "
                               >
                                    <BsCart3 />
                               </Button>
@@ -75,7 +75,7 @@ const Navbar = () => {
                               <Link href="/contact">
                                    <Button
                                         variant="outline"
-                                        className="border-none"
+                                        className="border-none hover:scale-110"
                                    >
                                         Contact
                                    </Button>
@@ -85,7 +85,7 @@ const Navbar = () => {
                          <Link href="/">
                               <Button
                                    variant="outline"
-                                   className="border-none mr-2"
+                                   className="border-none mr-2 hover:scale-105"
                               >
                                    Home
                               </Button>
@@ -115,65 +115,112 @@ const Navbar = () => {
                </motion.div>
 
                {menuOpen && (
-                    <div className="md:hidden flex flex-col items-center gap-4 p-6 bg-background border-t">
+                    <motion.div
+                         initial={{ opacity: 0, x: 50, scale: 0.95 }}
+                         animate={{ opacity: 1, x: 0, scale: 1 }}
+                         exit={{ opacity: 0, x: 50, scale: 0.95 }}
+                         transition={{
+                              duration: 0.3,
+                              ease: "easeInOut",
+                              delay: 0.2,
+                         }}
+                         className="md:hidden flex flex-col items-center gap-4 p-6 bg-background border-t shadow-lg rounded-lg"
+                    >
                          <Modetoggle />
+
                          {role === "customer" && (
-                              <Button
-                                   variant={"outline"}
-                                   className="border-none "
+                              <motion.div
+                                   whileHover={{ scale: 1.1 }}
+                                   whileTap={{ scale: 0.9 }}
                               >
-                                   <BsCart3 />
-                              </Button>
-                         )}
-                         {role !== "admin" && (
-                              <Link href="/contact">
                                    <Button
                                         variant="outline"
                                         className="border-none"
                                    >
-                                        Contact
+                                        <BsCart3 />
                                    </Button>
-                              </Link>
+                              </motion.div>
                          )}
 
-                         <Separator className="w-40 " />
-                         <Link href="/" onClick={() => setMenuOpen(false)}>
-                              <Button
-                                   variant={"outline"}
-                                   className="border-none"
+                         {role !== "admin" && (
+                              <motion.div
+                                   whileHover={{ scale: 1.05 }}
+                                   whileTap={{ scale: 0.95 }}
                               >
-                                   Home
-                              </Button>
-                         </Link>
+                                   <Link href="/contact">
+                                        <Button
+                                             variant="outline"
+                                             className="border-none"
+                                        >
+                                             Contact
+                                        </Button>
+                                   </Link>
+                              </motion.div>
+                         )}
 
-                         <Separator className="w-40 " />
+                         <Separator className="w-40" />
+
+                         <motion.div
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                         >
+                              <Link href="/" onClick={() => setMenuOpen(false)}>
+                                   <Button
+                                        variant="outline"
+                                        className="border-none"
+                                   >
+                                        Home
+                                   </Button>
+                              </Link>
+                         </motion.div>
+
+                         <Separator className="w-40" />
 
                          {role === "admin" && (
                               <>
-                                   <Link
-                                        href="/admin"
-                                        onClick={() => setMenuOpen(false)}
+                                   <motion.div
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                    >
-                                        <button className="hover:text-sky-500 transition ease-in-out">
-                                             Dashboard
-                                        </button>
-                                   </Link>
+                                        <Link
+                                             href="/admin"
+                                             onClick={() => setMenuOpen(false)}
+                                        >
+                                             <button className="hover:text-sky-500 transition ease-in-out">
+                                                  Dashboard
+                                             </button>
+                                        </Link>
+                                   </motion.div>
                                    <Separator className="w-40" />
                               </>
                          )}
 
                          <SignedIn>
-                              <SignOutButton>
-                                   <Button variant="destructive">Logout</Button>
-                              </SignOutButton>
+                              <motion.div
+                                   whileHover={{ scale: 1.05 }}
+                                   whileTap={{ scale: 0.95 }}
+                              >
+                                   <SignOutButton>
+                                        <Button variant="destructive">
+                                             Logout
+                                        </Button>
+                                   </SignOutButton>
+                              </motion.div>
                          </SignedIn>
 
                          <SignedOut>
-                              <SignInButton mode="modal">
-                                   <Button variant="default">Sign In</Button>
-                              </SignInButton>
+                              <motion.div
+                                   whileHover={{ scale: 1.05 }}
+                                   whileTap={{ scale: 0.95 }}
+                              >
+                                   <SignInButton mode="modal">
+                                        <Button variant="default">
+                                             Sign In
+                                        </Button>
+                                   </SignInButton>
+                              </motion.div>
                          </SignedOut>
-                    </div>
+                    </motion.div>
                )}
           </nav>
      );

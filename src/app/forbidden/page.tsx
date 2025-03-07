@@ -10,13 +10,19 @@ export default function Forbidden() {
      const router = useRouter();
      const [showDenied, setShowDenied] = useState(false);
 
+     const [mounted, setMounted] = useState(false);
+
      useEffect(() => {
+          setMounted(true);
+
           const timeout = setTimeout(() => {
                setShowDenied(true);
           }, 2000);
 
           return () => clearTimeout(timeout);
      }, []);
+
+     if (!mounted) return null;
 
      return (
           <div className="flex flex-col items-center justify-center h-screen bg-background">
