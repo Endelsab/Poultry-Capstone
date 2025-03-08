@@ -53,7 +53,7 @@ const Navbar = () => {
                          <Modetoggle />
 
                          {role === "admin" && (
-                              <Link href="/admin">
+                              <Link href="/admin/dashboard">
                                    <Button
                                         variant="outline"
                                         className="border-none hover:scale-105"

@@ -17,35 +17,27 @@ export async function SyncUser() {
                username,
           } = user;
 
-          const existingUser = await prisma.user.findUnique({
-               where: {
-                    clerkId,
-               },
+          let existingUser = await prisma.user.findUnique({
+               where: { clerkId },
           });
 
-          if (existingUser) return existingUser;
-
-          try {
-               await prisma.user.create({
+          if (!existingUser) {
+               existingUser = await prisma.user.create({
                     data: {
                          clerkId,
                          username:
                               username ||
                               primaryEmailAddress?.emailAddress.split("@")[0] ||
                               "",
-
                          email: primaryEmailAddress?.emailAddress || "",
                          role: (publicMetadata?.role as string) || "customer",
                     },
                });
-          } catch (error) {
-               console.log("error in SyncUser", error);
-               return { success: false, message: "error in SyncUser" };
           }
 
-          return { success: true, status: 201 };
+          return { success: true, role: existingUser.role };
      } catch (error) {
-          console.log("error in syncUser", error);
-          return { success: false, message: "error in syncUser" };
+          console.log("error in SyncUser", error);
+          return { success: false, message: "error in SyncUser" };
      }
 }

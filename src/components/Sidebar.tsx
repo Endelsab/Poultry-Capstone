@@ -69,7 +69,7 @@ export default function Sidebar() {
                                    >
                                         <Button
                                              variant="destructive"
-                                             className="w-full"
+                                             className="w-full hover:bg-red-500"
                                         >
                                              Logout
                                         </Button>

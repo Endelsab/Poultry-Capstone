@@ -23,13 +23,13 @@ model User {
 }
 
 model Product {
-  id String @id @default(cuid())
-
+  id          String @id @default(cuid())
   productName String
+
   productSize String
-  productQty  Int
-  stock       Int     @default(0)
-  price       Decimal @default(0.0)
+
+  stock Int @default(0)
+  price Int @default(0)
 
   orders Order[]
   cart   Cart[]

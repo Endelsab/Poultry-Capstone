@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 
-export async function GetAllUser() {
+export async function GetUsers() {
      try {
           const { userId, sessionClaims } = await auth();
 

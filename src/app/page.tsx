@@ -1,12 +1,14 @@
 import Footer from "@/components/Footer";
 import Main from "@/components/Main";
 import { ProductCard } from "@/components/ProductCard";
-import { currentUser } from "@clerk/nextjs/server";
-import { SyncUser } from "./actions/costumer/SyncUser";
+import { SyncUser } from "./actions/users/SyncUser";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
-     const user = await currentUser();
-     if (user) await SyncUser();
+     const user = await SyncUser();
+     if (user.success && user.role === "admin") {
+          redirect("/admin");
+     }
 
      return (
           <div className="flex flex-col gap-10">
