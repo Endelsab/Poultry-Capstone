@@ -21,7 +21,7 @@ export async function DeleteProduct(id: string) {
           if (!product)
                return { success: false, message: "product does not exist" };
 
-          const deletedProduct = await prisma.product.delete({
+          await prisma.product.delete({
                where: {
                     id,
                },
@@ -31,7 +31,6 @@ export async function DeleteProduct(id: string) {
           return {
                success: true,
                message: "Product deleted successfully",
-               deletedProduct,
           };
      } catch (error: any) {
           console.log("Error in DeleteProduct:", error.message);
