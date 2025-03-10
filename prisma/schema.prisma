@@ -23,10 +23,11 @@ model User {
 }
 
 model Product {
-  id          String @id @default(cuid())
-  productName String
+  id String @id @default(cuid())
 
+  productName String
   productSize String
+  img         String?
 
   stock Int @default(0)
   price Int @default(0)

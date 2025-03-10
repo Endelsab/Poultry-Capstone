@@ -25,11 +25,15 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { GetProducts } from "@/app/actions/product/getProduct";
 
 import { motion } from "framer-motion";
-import { useOptimistic, useState, useTransition } from "react";
+import { useState } from "react";
 import { DeleteProduct } from "@/app/actions/product/deleteProduct";
 import toast from "react-hot-toast";
 import DeleteDialog from "./DeleteDialog";
 import SkeletonTable from "./SkeletonTable";
+import UpdateProductCard from "./UpdateProductCard";
+
+import { useQueryClient } from "@tanstack/react-query";
+import { useDebounce } from "use-debounce";
 
 export type Products = {
      id: string;
@@ -42,17 +46,17 @@ export type Products = {
 function Products() {
      const [page, setPage] = useState(1);
 
+     const queryClient = useQueryClient();
+
+     const [searchTerm, setSearchTerm] = useState("");
+     const [debouncedSearch] = useDebounce(searchTerm, 500);
+
      const { data, isLoading, isError, isFetching } = useQuery({
-          queryKey: ["products", page],
-          queryFn: () => GetProducts(page, 10),
+          queryKey: ["products", page, debouncedSearch],
+          queryFn: () => GetProducts(page, 10, debouncedSearch),
           placeholderData: keepPreviousData,
+          refetchOnWindowFocus: true,
      });
-
-     const [optimisticProducts, setOptimisticProducts] = useOptimistic<
-          Products[]
-     >(data?.products || []);
-
-     const [isPending, startTransition] = useTransition();
 
      const [showDialog, setShowDialog] = useState(false);
 
@@ -77,24 +81,44 @@ function Products() {
      };
 
      const handleDelete = async (id: string) => {
-          startTransition(() => {
-               setOptimisticProducts((prev) =>
-                    prev.filter((product) => product.id !== id)
-               );
-          });
-
           try {
                const result = await DeleteProduct(id);
                if (!result.success) {
                     toast.error(result.message);
                } else {
                     toast.success(result.message);
+                    queryClient.invalidateQueries({ queryKey: ["products"] });
                }
           } catch (error) {
                console.log("error in delete product", error);
           }
-          startTransition(() => {
-               setOptimisticProducts(data?.products || []);
+     };
+
+     const [updateProduct, setUpdateProduct] = useState({
+          id: "",
+          productName: "",
+          productSize: "",
+          stock: 0,
+          price: 0,
+     });
+
+     const openUpdateDialog = (product: Products) => {
+          setUpdateProduct({
+               id: product.id,
+               productName: product.productName,
+               productSize: product.productSize,
+               stock: product.stock,
+               price: product.price,
+          });
+     };
+
+     const closeUpdateDialog = () => {
+          setUpdateProduct({
+               id: "",
+               productName: "",
+               productSize: "",
+               stock: 0,
+               price: 0,
           });
      };
 
@@ -129,6 +153,12 @@ function Products() {
                                              <Input
                                                   type="text"
                                                   placeholder="Search product"
+                                                  value={searchTerm}
+                                                  onChange={(e) =>
+                                                       setSearchTerm(
+                                                            e.target.value
+                                                       )
+                                                  }
                                              />
                                              <Button variant={"outline"}>
                                                   <SearchIcon size={"icon"} />
@@ -162,7 +192,7 @@ function Products() {
                                         </TableRow>
                                    </TableHeader>
                                    <TableBody>
-                                        {optimisticProducts.map(
+                                        {data?.products.map(
                                              (product, index) => (
                                                   <TableRow key={product.id}>
                                                        <TableCell>
@@ -188,7 +218,14 @@ function Products() {
                                                        </TableCell>
                                                        <TableCell>
                                                             <div className="flex gap-2 justify-end">
-                                                                 <Button variant="outline">
+                                                                 <Button
+                                                                      onClick={() =>
+                                                                           openUpdateDialog(
+                                                                                product
+                                                                           )
+                                                                      }
+                                                                      variant="outline"
+                                                                 >
                                                                       <Edit className="w-4 h-4 mr-1" />{" "}
                                                                       Edit
                                                                  </Button>
@@ -201,7 +238,7 @@ function Products() {
                                                                            )
                                                                       }
                                                                       variant="destructive"
-                                                                      className={`hover:bg-red-500 transition ease-in-out ${isPending ? "cursor-not-allowed" : ""} `}
+                                                                      className={`hover:bg-red-500 transition ease-in-out `}
                                                                  >
                                                                       <Trash2 className="w-4 h-4 mr-1" />{" "}
                                                                       Delete
@@ -266,6 +303,13 @@ function Products() {
                          </CardContent>
                     </Card>
                </motion.div>
+
+               <UpdateProductCard
+                    product={updateProduct}
+                    isOpen={Boolean(updateProduct.id)}
+                    onClose={closeUpdateDialog}
+               />
+
                <DeleteDialog
                     isOpen={showDialog}
                     onClose={closeDeleteDialog}

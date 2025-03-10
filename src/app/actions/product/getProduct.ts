@@ -3,7 +3,11 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 
-export async function GetProducts(page: number = 1, pageItem: number = 10) {
+export async function GetProducts(
+     page: number = 1,
+     pageItem: number = 10,
+     searchQuery: string = ""
+) {
      try {
           const { userId, sessionClaims } = await auth();
 
@@ -20,14 +24,28 @@ export async function GetProducts(page: number = 1, pageItem: number = 10) {
           const skip = (page - 1) * pageItem;
 
           const products = await prisma.product.findMany({
+               where: {
+                    productName: {
+                         contains: searchQuery,
+                         mode: "insensitive",
+                    },
+               },
                orderBy: {
                     productName: "asc",
                },
-               skip: skip,
+               skip,
                take: pageItem,
           });
 
-          const totalProducts = await prisma.product.count();
+          const totalProducts = await prisma.product.count({
+               where: {
+                    productName: {
+                         contains: searchQuery,
+                         mode: "insensitive",
+                    },
+               },
+          });
+
           const hasMore = skip + pageItem < totalProducts;
 
           return {

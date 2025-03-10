@@ -1,4 +1,5 @@
 "use server";
+
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
@@ -12,7 +13,6 @@ export async function AddProduct(prevState: string, formData: FormData) {
           if (sessionClaims?.metadata?.role !== "admin")
                return { success: false, message: "UnAuthorized" };
 
-          
           const productName = (formData.get("productName") as string)?.trim();
           const productSize = (formData.get("productSize") as string)?.trim();
           const stock = Number(formData.get("stock"));
