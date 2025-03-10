@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
      Card,
      CardContent,
@@ -10,17 +11,26 @@ import {
 } from "@/components/ui/card";
 import { SignedIn, SignOutButton } from "@clerk/nextjs";
 import { Button } from "./ui/button";
-
 import { motion } from "framer-motion";
 import { FaUsers, FaShoppingCart, FaChartLine } from "react-icons/fa";
 import { TbEggs } from "react-icons/tb";
 
 export default function Sidebar() {
+     const router = useRouter();
+
      const menuItems = [
-          { name: "Products", icon: <TbEggs /> },
-          { name: "Customers", icon: <FaUsers /> },
-          { name: "Orders", icon: <FaShoppingCart /> },
-          { name: "Sales", icon: <FaChartLine /> },
+          { name: "Products", icon: <TbEggs />, path: "/admin" },
+          {
+               name: "Customers",
+               icon: <FaUsers />,
+               path: "/admin/customers",
+          },
+          {
+               name: "Orders",
+               icon: <FaShoppingCart />,
+               path: "/dashboard/orders",
+          },
+          { name: "Sales", icon: <FaChartLine />, path: "/dashboard/sales" },
      ];
 
      return (
@@ -45,13 +55,14 @@ export default function Sidebar() {
                               {menuItems.map((item, index) => (
                                    <motion.div
                                         key={index}
-                                        className="flex items-center gap-3 w-full px-4 py-2 text-lg cursor-pointer rounded-lg transition-all"
+                                        className="flex items-center gap-3 w-full px-4 py-2 text-lg cursor-pointer rounded-lg transition-all "
                                         whileTap={{ scale: 0.95 }}
+                                        onClick={() => router.push(item.path)}
                                    >
                                         <span className="text-sky-600 text-xl">
                                              {item.icon}
                                         </span>
-                                        <span className="flex-grow  hover:text-emerald-500  transition ease-out duration-200">
+                                        <span className="flex-grow hover:text-emerald-500 transition ease-out duration-200">
                                              {item.name}
                                         </span>
                                    </motion.div>

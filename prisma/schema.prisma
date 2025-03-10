@@ -15,6 +15,8 @@ model User {
   clerkId String @unique
   role    String
 
+  isBlocked Boolean @default(false)
+
   orders Order[]
   cart   Cart[]
 
@@ -64,7 +66,6 @@ model Order {
   status     OrderStatus @default(PENDING)
   totalPrice Decimal     @default(0.0)
 
-  // Order-specific user dynamic details (instead of relying on User model)
   fullName    String
   email       String @db.Text
   phoneNumber String

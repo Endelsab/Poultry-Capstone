@@ -3,7 +3,11 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 
-export async function GetUsers() {
+export async function GetUsers(
+     page: number = 1,
+     pageItem: number = 10,
+     searchQuery: string = ""
+) {
      try {
           const { userId, sessionClaims } = await auth();
 
@@ -16,15 +20,37 @@ export async function GetUsers() {
                     message: "Unauthorized access. Admins only.",
                };
 
-          const allUser = await prisma.user.findMany({
+          const skip = (page - 1) * pageItem;
+
+          const allCustomers = await prisma.user.findMany({
                where: {
-                    clerkId: {
-                         not: userId,
+                    username: {
+                         contains: searchQuery,
+                         mode: "insensitive",
                     },
+                    isBlocked: false,
+                    role: { not: "admin" },
+               },
+               orderBy: {
+                    username: "asc",
+               },
+               skip,
+               take: pageItem,
+          });
+
+          const totalCustomers = await prisma.user.count({
+               where: {
+                    username: {
+                         contains: searchQuery,
+                         mode: "insensitive",
+                    },
+                    role: { not: "admin" },
                },
           });
 
-          return { success: true, allUser };
+          const hasMore = skip + pageItem < totalCustomers;
+
+          return { success: true, allCustomers, hasMore };
      } catch (error) {
           console.log("error in GetAllUser", error);
           return { success: false, message: "error in GetAllUser " };
