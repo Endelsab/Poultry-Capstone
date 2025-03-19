@@ -30,6 +30,8 @@ const Navbar = () => {
           }
      }, [user]);
 
+     console.log("user navbar Role:", role);
+
      const [menuOpen, setMenuOpen] = useState(false);
 
      return (
@@ -53,7 +55,7 @@ const Navbar = () => {
                          <Modetoggle />
 
                          {role === "admin" && (
-                              <Link href="/admin/dashboard">
+                              <Link href="/admin">
                                    <Button
                                         variant="outline"
                                         className="border-none hover:scale-105"

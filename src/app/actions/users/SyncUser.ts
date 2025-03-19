@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 export async function SyncUser() {
      try {
@@ -17,25 +18,27 @@ export async function SyncUser() {
                username,
           } = user;
 
-          let existingUser = await prisma.user.findUnique({
+          const existingUser = await prisma.user.findUnique({
                where: { clerkId },
           });
 
-          if (!existingUser) {
-               existingUser = await prisma.user.create({
-                    data: {
-                         clerkId,
-                         username:
-                              username ||
-                              primaryEmailAddress?.emailAddress.split("@")[0] ||
-                              "",
-                         email: primaryEmailAddress?.emailAddress || "",
-                         role: (publicMetadata?.role as string) || "customer",
-                    },
-               });
-          }
+          if (existingUser) return;
 
-          return { success: true, role: existingUser.role };
+          await prisma.user.create({
+               data: {
+                    clerkId,
+                    username:
+                         username ||
+                         primaryEmailAddress?.emailAddress.split("@")[0] ||
+                         "",
+                    email: primaryEmailAddress?.emailAddress || "",
+                    role: (publicMetadata?.role as string) || "customer",
+               },
+          });
+
+          revalidatePath("/");
+
+          return { success: true };
      } catch (error) {
           console.log("error in SyncUser", error);
           return { success: false, message: "error in SyncUser" };

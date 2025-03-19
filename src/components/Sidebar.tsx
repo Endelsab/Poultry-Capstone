@@ -28,7 +28,7 @@ export default function Sidebar() {
           {
                name: "Orders",
                icon: <FaShoppingCart />,
-               path: "/dashboard/orders",
+               path: "/admin/orders",
           },
           { name: "Sales", icon: <FaChartLine />, path: "/dashboard/sales" },
      ];

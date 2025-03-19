@@ -9,9 +9,10 @@ export default async function AdminLayout({
 }) {
      const user = await currentUser();
 
-     if (!user || user.publicMetadata?.role !== "admin") {
+     if (!user || user?.publicMetadata?.role !== "admin") {
           redirect("/");
      }
+     console.log("role in admin layout :", user?.publicMetadata?.role);
 
      return (
           <div className="flex flex-row gap-14  p-12">

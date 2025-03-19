@@ -42,10 +42,11 @@ const Main = () => {
                          variants={childVariants}
                          className=" text-4xl  md:text-5xl font-bold text-sky-500 leading-tight"
                     >
-                         Poultry Management System with E-Commerce{" "}
-                         <span className="text-emerald-500">
+                         Yulo&apos;s Poultry Farm <br /> An Online Ordering
+                         Platform for Poultry
+                         <span className="text-emerald-500 ml-2">
                               <Typewriter
-                                   words={["Feature"]}
+                                   words={["Product"]}
                                    loop={true}
                                    cursor
                                    cursorStyle="|"
@@ -58,11 +59,7 @@ const Main = () => {
                     <motion.p
                          variants={childVariants}
                          className="text-sm  md:text-md mt-8 text-gray-400 from-neutral-500"
-                    >
-                         Streamline your poultry business with smart inventory,
-                         sales tracking, <br /> and online ordering all in one
-                         platform.
-                    </motion.p>
+                    ></motion.p>
 
                     <motion.div
                          variants={childVariants}
