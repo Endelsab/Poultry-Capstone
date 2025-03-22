@@ -15,8 +15,8 @@ export default async function AdminLayout({
      console.log("role in admin layout :", user?.publicMetadata?.role);
 
      return (
-          <div className="flex flex-row gap-14  p-4 mr-10 mt-4">
-               <div className=" ">
+          <div className="flex flex-row gap-6  p-4 mr-10 mt-4">
+               <div className="ml-3 ">
                     <Sidebar />
                </div>
                <div className=" ">{children}</div>

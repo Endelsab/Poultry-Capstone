@@ -1,7 +1,6 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Decimal } from "@prisma/client/runtime/library";
 
 function validateOrderInput(fullName: string, email: string, address: string) {
      if (!fullName.trim()) return "Full name is required";

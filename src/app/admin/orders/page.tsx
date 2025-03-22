@@ -26,38 +26,54 @@ import { Button } from "@/components/ui/button";
 import SkeletonTable from "@/components/SkeletonTable";
 
 import { BsFillPersonXFill } from "react-icons/bs";
-import { BlockUser } from "@/app/actions/users/BlockUser";
+
 import toast from "react-hot-toast";
 import { GetOrder } from "@/app/actions/order/getOrder";
+
+import {
+     Select,
+     SelectContent,
+     SelectGroup,
+     SelectItem,
+     SelectLabel,
+     SelectTrigger,
+     SelectValue,
+} from "@/components/ui/select";
+import { ApproveOrder } from "@/app/actions/order/approvedOrder";
 
 function Orders() {
      const [page, setPage] = useState(1);
 
+     const [status, setStatus] = useState("");
+
      const { data, isLoading, isError, isFetching } = useQuery({
-          queryKey: ["orders", page],
-          queryFn: () => GetOrder(page, 10),
+          queryKey: ["orders", page, status],
+          queryFn: () => GetOrder(page, 10, status),
           placeholderData: keepPreviousData,
           refetchOnWindowFocus: true,
      });
 
-     const [blocking, setBlocking] = useState(false);
+     console.log("status here : ", status);
+
+     const [loading, setLoading] = useState(false);
 
      const queryClient = useQueryClient();
 
-     const handleBlock = async (id: string) => {
-          setBlocking(true);
+     const handleApprove = async (orderId: string) => {
+          setLoading(true);
           try {
-               const result = await BlockUser(id);
+               const result = await ApproveOrder(orderId);
 
-               if (!result.success) {
+               if (result.success) {
+                    toast.success(result.message);
+                    queryClient.invalidateQueries({ queryKey: ["orders"] });
+               } else {
                     toast.error(result.message);
                }
-               toast.success(result.message);
-               queryClient.invalidateQueries({ queryKey: ["customers"] });
           } catch (error) {
-               console.log("error in handleBlock", error);
+               console.log("error in handleApprove", error);
           } finally {
-               setBlocking(false);
+               setLoading(false);
           }
      };
 
@@ -79,11 +95,37 @@ function Orders() {
           >
                <Card>
                     <CardHeader>
-                         <div className="flex justify-between mr-3">
+                         <div className="flex gap-4">
                               <CardTitle className="text-lg font-semibold text-sky-500">
                                    Orders
                               </CardTitle>
-                              <div className="flex justify-between gap-4"></div>
+                              <div className="flex justify-between gap-4">
+                                   <Select
+                                        onValueChange={(value) =>
+                                             setStatus(value)
+                                        }
+                                   >
+                                        <SelectTrigger className="w-[180px]">
+                                             <SelectValue placeholder="Select a status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                             <SelectGroup>
+                                                  <SelectLabel>
+                                                       Status
+                                                  </SelectLabel>
+                                                  <SelectItem value="pending">
+                                                       Pending
+                                                  </SelectItem>
+                                                  <SelectItem value="approved">
+                                                       Approved
+                                                  </SelectItem>
+                                                  <SelectItem value="declined">
+                                                       Declined
+                                                  </SelectItem>
+                                             </SelectGroup>
+                                        </SelectContent>
+                                   </Select>
+                              </div>
                          </div>
                     </CardHeader>
                     <CardContent className="overflow-x-auto">
@@ -150,21 +192,22 @@ function Orders() {
                                                   <div className="flex gap-2 justify-end">
                                                        <Button
                                                             size={"sm"}
-                                                            onClick={() =>
-                                                                 handleBlock(
-                                                                      order.id
-                                                                 )
-                                                            }
                                                             variant="destructive"
                                                             className={`hover:bg-red-500 transition ease-in-out `}
                                                        >
                                                             <BsFillPersonXFill />
-                                                            {blocking ?
-                                                                 "Declining..."
-                                                            :    "Decline"}
+                                                            Decline
                                                        </Button>
 
-                                                       <Button size={"sm"}>
+                                                       <Button
+                                                            onClick={() =>
+                                                                 handleApprove(
+                                                                      order.id
+                                                                 )
+                                                            }
+                                                            className={`${loading ? "cursor-not-allowed disabled" : ""} hover:bg-sky-500 `}
+                                                            size={"sm"}
+                                                       >
                                                             Approve
                                                        </Button>
                                                   </div>

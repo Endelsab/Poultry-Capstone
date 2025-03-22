@@ -2,9 +2,13 @@
 
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { OrderStatus } from "@prisma/client";
 
-export async function GetOrder(page: number = 1, pageItem: number = 10) {
-
+export async function GetOrder(
+     page: number = 1,
+     pageItem: number = 10,
+     searchQueryStatus: string
+) {
      try {
           const { userId, sessionClaims } = await auth();
 
@@ -20,30 +24,35 @@ export async function GetOrder(page: number = 1, pageItem: number = 10) {
 
           const skip = (page - 1) * pageItem;
 
+          console.log("status here:", searchQueryStatus);
+
+          const prismaStatus =
+               searchQueryStatus ?
+                    (searchQueryStatus.toUpperCase() as OrderStatus)
+               :    "PENDING";
+
           const orders = await prisma.order.findMany({
                where: {
-                    status: "PENDING",
-              },
-              
-              include: {
-                  product: {
-                      select: {
-                          productName: true,
-                          productSize:true
-                      }
-                  }
-              },
+                    status: prismaStatus,
+               },
+               include: {
+                    product: {
+                         select: {
+                              productName: true,
+                              productSize: true,
+                         },
+                    },
+               },
                orderBy: {
                     createdAt: "asc",
                },
-
                skip,
                take: pageItem,
           });
 
           const totalOrder = await prisma.order.count({
                where: {
-                    status: "PENDING",
+                    status: prismaStatus,
                },
           });
 
@@ -54,12 +63,10 @@ export async function GetOrder(page: number = 1, pageItem: number = 10) {
                message:
                     orders.length ?
                          "Orders fetched successfully"
-                    :    "There are no pending orders right now.",
+                    :    "There are no orders right now.",
                orders,
                hasMore,
-         };
-         
-
+          };
      } catch (error) {
           console.error("Error in GetOrder action:", error);
           return {
