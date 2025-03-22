@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-export async function ApproveOrder(orderId: string) {
+export async function DeliverySched(orderId: string, schedule: string) {
      try {
           const { userId, sessionClaims } = await auth();
 
@@ -29,12 +29,13 @@ export async function ApproveOrder(orderId: string) {
           if (!order)
                return { success: false, message: "Order does not exist" };
 
-          const orderApprove = await prisma.order.update({
+          const deliverOrder = await prisma.order.update({
                where: {
                     id: orderId,
                },
                data: {
-                    status: "APPROVED",
+                    status: "DELIVERY",
+                    deliverySched: schedule,
                },
           });
 
@@ -42,14 +43,14 @@ export async function ApproveOrder(orderId: string) {
 
           return {
                success: true,
-               message: "Approved order successfully",
-               orderApprove,
+               message: "Order is scheduled for delivery",
+               deliverOrder,
           };
      } catch (error) {
-          console.error("Error in ApproveOrder action:", error);
+          console.error("Error in DeliverySched action:", error);
           return {
                success: false,
-               message: "Cannot approve orders right now.",
+               message: "Cannot schedule orders right now.",
           };
      }
 }

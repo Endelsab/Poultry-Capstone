@@ -41,7 +41,7 @@ export default function Sidebar() {
                animate={{ opacity: 1, x: 0 }}
                transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
           >
-               <Card className="flex flex-col justify-center items-center p-4 shadow-lg rounded-2xl">
+               <Card className="flex flex-col   shadow-lg rounded-2xl">
                     <CardHeader>
                          <CardTitle className="text-center text-xl font-semibold">
                               Menu

@@ -60,10 +60,8 @@ export async function GetOrder(
 
           return {
                success: true,
-               message:
-                    orders.length ?
-                         "Orders fetched successfully"
-                    :    "There are no orders right now.",
+               message: "Orders fetched successfully",
+
                orders,
                hasMore,
           };

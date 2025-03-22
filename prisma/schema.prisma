@@ -62,14 +62,15 @@ model Order {
   userId    String
   productId String
 
-  quantity   Int
-  status     OrderStatus @default(PENDING)
-  totalPrice Int
-
   fullName String
   email    String @db.Text
+  address  String
 
-  address String
+  quantity   Int
+  totalPrice Int
+
+  status        OrderStatus @default(PENDING)
+  deliverySched String?
 
   users   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -81,5 +82,7 @@ model Order {
 enum OrderStatus {
   PENDING
   APPROVED
+  DELIVERY
   DECLINED
+  HISTORY
 }

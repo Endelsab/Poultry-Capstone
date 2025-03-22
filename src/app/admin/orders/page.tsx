@@ -40,6 +40,8 @@ import {
      SelectValue,
 } from "@/components/ui/select";
 import { ApproveOrder } from "@/app/actions/order/approvedOrder";
+import SchedCard from "@/components/SchedCard";
+import { OrderReceived } from "@/app/actions/order/orderRecieve";
 
 function Orders() {
      const [page, setPage] = useState(1);
@@ -77,6 +79,27 @@ function Orders() {
           }
      };
 
+     const handleReceive = async (orderId: string) => {
+          setLoading(true);
+
+          try {
+               const result = await OrderReceived(orderId);
+
+               if (result.success) {
+                    toast.success(result.message);
+                    queryClient.invalidateQueries({ queryKey: ["orders"] });
+               } else {
+                    toast.error(result.message);
+               }
+          } catch (error) {
+               console.log("error in handleReceive", error);
+          } finally {
+               setLoading(false);
+          }
+     };
+
+     const [orderId, setOrderId] = useState("");
+
      if (isLoading) return <SkeletonTable />;
 
      if (isError || !data?.success) {
@@ -110,7 +133,7 @@ function Orders() {
                                         </SelectTrigger>
                                         <SelectContent>
                                              <SelectGroup>
-                                                  <SelectLabel>
+                                                  <SelectLabel className="text-gray-500">
                                                        Status
                                                   </SelectLabel>
                                                   <SelectItem value="pending">
@@ -119,8 +142,14 @@ function Orders() {
                                                   <SelectItem value="approved">
                                                        Approved
                                                   </SelectItem>
+                                                  <SelectItem value="delivery">
+                                                       Delivery
+                                                  </SelectItem>
                                                   <SelectItem value="declined">
                                                        Declined
+                                                  </SelectItem>
+                                                  <SelectItem value="history">
+                                                       History
                                                   </SelectItem>
                                              </SelectGroup>
                                         </SelectContent>
@@ -185,31 +214,111 @@ function Orders() {
                                                   {order.quantity}
                                              </TableCell>
                                              <TableCell className="text-center">
-                                                  {order.totalPrice}
+                                                  ₱ {order.totalPrice}
                                              </TableCell>
 
                                              <TableCell>
-                                                  <div className="flex gap-2 justify-end">
-                                                       <Button
-                                                            size={"sm"}
-                                                            variant="destructive"
-                                                            className={`hover:bg-red-500 transition ease-in-out `}
-                                                       >
-                                                            <BsFillPersonXFill />
-                                                            Decline
-                                                       </Button>
+                                                  <div className="flex gap-2 justify-center">
+                                                       {order.status ===
+                                                            "PENDING" && (
+                                                            <>
+                                                                 {" "}
+                                                                 <Button
+                                                                      size={
+                                                                           "sm"
+                                                                      }
+                                                                      variant="destructive"
+                                                                      className={`hover:bg-red-500 transition ease-in-out `}
+                                                                 >
+                                                                      <BsFillPersonXFill />
+                                                                      Decline
+                                                                 </Button>
+                                                                 <Button
+                                                                      onClick={() =>
+                                                                           handleApprove(
+                                                                                order.id
+                                                                           )
+                                                                      }
+                                                                      className={`${loading ? "cursor-not-allowed disabled" : ""} hover:bg-sky-500 bg-sky-600 text-white font-sans `}
+                                                                      size={
+                                                                           "sm"
+                                                                      }
+                                                                 >
+                                                                      Approve
+                                                                 </Button>
+                                                            </>
+                                                       )}
+                                                       {order.status ===
+                                                            "APPROVED" && (
+                                                            <>
+                                                                 {" "}
+                                                                 <Button
+                                                                      onClick={() =>
+                                                                           setOrderId(
+                                                                                order.id
+                                                                           )
+                                                                      }
+                                                                      size={
+                                                                           "sm"
+                                                                      }
+                                                                      className=" text-center bg-sky-600 hover:bg-sky-400 text-white"
+                                                                 >
+                                                                      Schedule
+                                                                 </Button>{" "}
+                                                            </>
+                                                       )}
 
-                                                       <Button
-                                                            onClick={() =>
-                                                                 handleApprove(
-                                                                      order.id
-                                                                 )
-                                                            }
-                                                            className={`${loading ? "cursor-not-allowed disabled" : ""} hover:bg-sky-500 `}
-                                                            size={"sm"}
-                                                       >
-                                                            Approve
-                                                       </Button>
+                                                       {order.status ===
+                                                            "DELIVERY" && (
+                                                            <>
+                                                                 {" "}
+                                                                 <span>
+                                                                      Delivery -{" "}
+                                                                      {
+                                                                           order.deliverySched
+                                                                      }
+                                                                 </span>
+                                                                 <Button
+                                                                      onClick={() =>
+                                                                           handleReceive(
+                                                                                order.id
+                                                                           )
+                                                                      }
+                                                                      className={`bg-yellow-600 mt-3 text-black font-semibold  ${loading ? "cursor-not-allowed disabled:bg-gray-800" : ""}  `}
+                                                                      size={
+                                                                           "sm"
+                                                                      }
+                                                                 >
+                                                                      Order
+                                                                      recieved
+                                                                 </Button>
+                                                            </>
+                                                       )}
+
+                                                       {order.status ===
+                                                            "HISTORY" && (
+                                                            <span className="text-emerald-500">
+                                                                 Order received{" "}
+                                                                 <br />
+                                                                 {
+                                                                      order.deliverySched
+                                                                 }
+                                                            </span>
+                                                       )}
+
+                                                       {order.status ===
+                                                            "DECLINED" && (
+                                                            <Button
+                                                                 disabled
+                                                                 size={"sm"}
+                                                                 variant={
+                                                                      "outline"
+                                                                 }
+                                                                 className=" bg-gray-900"
+                                                            >
+                                                                 Declined order
+                                                            </Button>
+                                                       )}
                                                   </div>
                                              </TableCell>
                                         </TableRow>
@@ -264,6 +373,12 @@ function Orders() {
                               </TableFooter>
                          </Table>
                     </CardContent>
+
+                    <SchedCard
+                         isOpen={!!orderId}
+                         onClose={() => setOrderId("")}
+                         orderId={orderId}
+                    />
                </Card>
           </motion.div>
      );
