@@ -120,7 +120,7 @@ function Customers() {
                                                   Email address
                                              </TableHead>
 
-                                             <TableHead className="w-[100px]">
+                                             <TableHead className="w-[100px] text-center">
                                                   Action
                                              </TableHead>
                                         </TableRow>
@@ -143,7 +143,7 @@ function Customers() {
 
                                                        <TableCell>
                                                             <div className="flex gap-2 justify-end">
-                                                                 <Button
+                                                                 <Button size={"sm"}
                                                                       onClick={() =>
                                                                            handleBlock(
                                                                                 customer.id

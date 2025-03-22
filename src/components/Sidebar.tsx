@@ -20,22 +20,23 @@ export default function Sidebar() {
 
      const menuItems = [
           { name: "Products", icon: <TbEggs />, path: "/admin" },
-          {
-               name: "Customers",
-               icon: <FaUsers />,
-               path: "/admin/customers",
-          },
+
           {
                name: "Orders",
                icon: <FaShoppingCart />,
                path: "/admin/orders",
           },
           { name: "Sales", icon: <FaChartLine />, path: "/dashboard/sales" },
+          {
+               name: "Customers",
+               icon: <FaUsers />,
+               path: "/admin/customers",
+          },
      ];
 
      return (
           <motion.div
-               className="size-[300px] ml-20"
+               className="size-[200px]"
                initial={{ opacity: 0, x: -50 }}
                animate={{ opacity: 1, x: 0 }}
                transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
@@ -45,9 +46,6 @@ export default function Sidebar() {
                          <CardTitle className="text-center text-xl font-semibold">
                               Menu
                          </CardTitle>
-                         <CardDescription className="text-gray-500">
-                              Manage your business
-                         </CardDescription>
                     </CardHeader>
 
                     <CardContent className="w-full">

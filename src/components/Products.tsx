@@ -219,6 +219,9 @@ function Products() {
                                                        <TableCell>
                                                             <div className="flex gap-2 justify-end">
                                                                  <Button
+                                                                      size={
+                                                                           "sm"
+                                                                      }
                                                                       onClick={() =>
                                                                            openUpdateDialog(
                                                                                 product
@@ -230,6 +233,9 @@ function Products() {
                                                                       Edit
                                                                  </Button>
                                                                  <Button
+                                                                      size={
+                                                                           "sm"
+                                                                      }
                                                                       onClick={() =>
                                                                            openDeleteDialog(
                                                                                 product.id,
