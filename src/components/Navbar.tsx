@@ -16,6 +16,7 @@ import {
      useUser,
 } from "@clerk/nextjs";
 import { BsCart3 } from "react-icons/bs";
+import OrderInvoice from "./OrderInvoice";
 
 const Navbar = () => {
      const { user } = useUser();
@@ -33,6 +34,8 @@ const Navbar = () => {
      console.log("user navbar Role:", role);
 
      const [menuOpen, setMenuOpen] = useState(false);
+
+     const [orderOpen, setOrderOpen] = useState(false);
 
      return (
           <nav className="sticky top-0 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
@@ -71,6 +74,16 @@ const Navbar = () => {
                                    className="border-none hover:scale-110 "
                               >
                                    <BsCart3 />
+                              </Button>
+                         )}
+
+                         {role === "customer" && (
+                              <Button
+                                   onClick={() => setOrderOpen(!orderOpen)}
+                                   variant={"outline"}
+                                   className="border-none hover:scale-110 "
+                              >
+                                   Order
                               </Button>
                          )}
                          {role !== "admin" && (
@@ -126,7 +139,7 @@ const Navbar = () => {
                               ease: "easeInOut",
                               delay: 0.2,
                          }}
-                         className="md:hidden flex flex-col items-center gap-4 p-6 bg-background border-t shadow-lg rounded-lg"
+                         className="md:hidden flex justify-between   items-center   p-6  border-t shadow-lg rounded-lg"
                     >
                          <Modetoggle />
 
@@ -134,12 +147,29 @@ const Navbar = () => {
                               <motion.div
                                    whileHover={{ scale: 1.1 }}
                                    whileTap={{ scale: 0.9 }}
+                                   className="flex "
                               >
                                    <Button
                                         variant="outline"
                                         className="border-none"
                                    >
                                         <BsCart3 />
+                                   </Button>
+                              </motion.div>
+                         )}
+
+                         {role === "customer" && (
+                              <motion.div
+                                   whileHover={{ scale: 1.1 }}
+                                   whileTap={{ scale: 0.9 }}
+                                   className="flex gap-2"
+                              >
+                                   <Button
+                                        onClick={() => setOrderOpen(!orderOpen)}
+                                        variant="outline"
+                                        className="border-none"
+                                   >
+                                        Order
                                    </Button>
                               </motion.div>
                          )}
@@ -160,8 +190,6 @@ const Navbar = () => {
                               </motion.div>
                          )}
 
-                         <Separator className="w-40" />
-
                          <motion.div
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
@@ -175,8 +203,6 @@ const Navbar = () => {
                                    </Button>
                               </Link>
                          </motion.div>
-
-                         <Separator className="w-40" />
 
                          {role === "admin" && (
                               <>
@@ -203,7 +229,11 @@ const Navbar = () => {
                                    whileTap={{ scale: 0.95 }}
                               >
                                    <SignOutButton>
-                                        <Button variant="destructive">
+                                        <Button
+                                             size={"sm"}
+                                             variant="destructive"
+                                             className=" border-none ml-2 hover:bg-red-500"
+                                        >
                                              Logout
                                         </Button>
                                    </SignOutButton>
@@ -224,6 +254,11 @@ const Navbar = () => {
                          </SignedOut>
                     </motion.div>
                )}
+
+               <OrderInvoice
+                    isOpen={orderOpen}
+                    onClose={() => setOrderOpen(false)}
+               />
           </nav>
      );
 };

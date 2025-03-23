@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import {
@@ -40,48 +40,46 @@ type Products = {
 
 function OrderCard({ product }: { product: Products }) {
      const { user, isLoaded } = useUser();
+     const router = useRouter();
 
-     if (!isLoaded) return <p>cannot load user</p>;
-     const userId = user?.id;
-
-     if (!userId) {
-          toast.error("User not found. Please log in.");
-          return;
-     }
-
+     // State hooks
      const [quantity, setQuantity] = useState(1);
-
      const [fullname, setFullname] = useState("");
      const [email, setEmail] = useState("");
      const [address, setAddress] = useState(
           "Country, Province, Municipality, Brgy, Purok and Street "
      );
-
      const [open, setOpen] = useState(false);
-
      const [loading, setLoading] = useState(false);
 
+     // Redirect if user is not loaded
+     useEffect(() => {
+          if (!isLoaded) return;
+          if (!user?.id) {
+               toast.error("User not found. Please log in.");
+          }
+     }, [isLoaded, user]);
+
      const increaseQty = () => {
-          if (quantity < product.stock) setQuantity(quantity + 1);
+          setQuantity((prev) => Math.min(prev + 1, product.stock));
      };
 
      const decreaseQty = () => {
-          if (quantity > 1) setQuantity(quantity - 1);
+          setQuantity((prev) => Math.max(prev - 1, 1));
      };
 
-     const router = useRouter();
-
      const handleSubmit = async () => {
+          if (!user?.id) return; // Prevent API call if no user
           setLoading(true);
 
           try {
                const result = await PlaceOrder({
-                    userId: userId,
+                    userId: user.id,
                     productId: product.id,
-                    quantity: quantity,
+                    quantity,
                     fullName: fullname,
-                    email: email,
-                    address: address,
+                    email,
+                    address,
                });
 
                if (result.success) {
@@ -91,7 +89,8 @@ function OrderCard({ product }: { product: Products }) {
                     toast.error(result.message);
                }
           } catch (error) {
-               console.log("error in handlesubmit in order placed", error);
+               console.error("Error placing order:", error);
+               toast.error("Something went wrong.");
           } finally {
                setLoading(false);
           }
@@ -120,6 +119,7 @@ function OrderCard({ product }: { product: Products }) {
                     </CardHeader>
                     <CardContent>
                          <div className="flex flex-col gap-5">
+                              {/* Shipping Address */}
                               <motion.div
                                    className="flex flex-col mt-5 dark:bg-gray-900 p-2 gap-3 rounded-md"
                                    initial={{ opacity: 0 }}
@@ -139,8 +139,8 @@ function OrderCard({ product }: { product: Products }) {
                                         </p>
 
                                         <Button
-                                             onClick={() => setOpen(!open)}
-                                             variant={"outline"}
+                                             onClick={() => setOpen(true)}
+                                             variant="outline"
                                              className="w-full font-semibold mt-3 p-2 hover:dark:bg-gray-800 dark:bg-slate-900"
                                         >
                                              Edit
@@ -148,6 +148,7 @@ function OrderCard({ product }: { product: Products }) {
                                    </div>
                               </motion.div>
 
+                              {/* Address Edit Modal */}
                               <AlertDialog open={open}>
                                    <AlertDialogContent>
                                         <AlertDialogHeader>
@@ -168,7 +169,6 @@ function OrderCard({ product }: { product: Products }) {
                                                                            .value
                                                                  )
                                                             }
-                                                            className="mt-2"
                                                             id="Fullname"
                                                        />
                                                        <Label htmlFor="email">
@@ -183,7 +183,6 @@ function OrderCard({ product }: { product: Products }) {
                                                                  )
                                                             }
                                                             type="email"
-                                                            className="mt-2"
                                                             id="email"
                                                        />
                                                        <Label htmlFor="address">
@@ -198,20 +197,13 @@ function OrderCard({ product }: { product: Products }) {
                                                                  )
                                                             }
                                                             id="address"
-                                                            className=""
-                                                            placeholder="Country, Province, Municipality, Brgy, Purok and Street"
                                                        />
                                                   </div>
                                              </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                              <AlertDialogAction
-                                                  onClick={() => {
-                                                       setFullname(fullname);
-                                                       setEmail(email);
-                                                       setAddress(address);
-                                                       setOpen(false);
-                                                  }}
+                                                  onClick={() => setOpen(false)}
                                              >
                                                   Save
                                              </AlertDialogAction>
@@ -219,20 +211,15 @@ function OrderCard({ product }: { product: Products }) {
                                    </AlertDialogContent>
                               </AlertDialog>
 
-                              <motion.div
-                                   className="flex flex-col mt-5 dark:bg-gray-900 p-2 gap-3 rounded-md"
-                                   initial={{ opacity: 0, x: -50 }}
-                                   animate={{ opacity: 1, x: 0 }}
-                                   transition={{ delay: 0.6, duration: 0.5 }}
-                              >
-                                   <div className="flex justify-between ">
+                              {/* Product Details */}
+                              <motion.div className="flex flex-col dark:bg-gray-900 p-2 gap-3 rounded-md">
+                                   <div className="flex justify-between">
                                         <h2>Item Shipped:</h2>
-                                        <div className="flex gap-12 ml-7">
+                                        <div className="flex gap-12">
                                              <p>QTY</p>
-                                             <span className="">Price</span>
+                                             <span>Price</span>
                                         </div>
                                    </div>
-
                                    <div className="flex justify-between p-2">
                                         <div className="flex gap-5 items-center">
                                              <motion.img
@@ -242,98 +229,37 @@ function OrderCard({ product }: { product: Products }) {
                                                        "/small.jpg"
                                                   }
                                                   alt={product.productName}
-                                                  whileHover={{ scale: 1.05 }}
                                              />
-                                             <p className="text-sky-400 text-sm md:text-xl mr-10">
+                                             <p className="text-sky-400 text-sm md:text-xl">
                                                   {product.productName} -{" "}
                                                   {product.productSize}
                                              </p>
                                         </div>
-
-                                        <div className="flex  text-sky-400 gap-7 mt-7">
-                                             <div className="text-2xl flex justify-center gap-2">
-                                                  <motion.div
-                                                       whileTap={{ scale: 0.9 }}
-                                                  >
-                                                       <MinusIcon
-                                                            onClick={
-                                                                 decreaseQty
-                                                            }
-                                                            className="dark:text-white text-gray-500 hover:scale-150 size-4 mt-2 cursor-pointer"
-                                                       />
-                                                  </motion.div>
+                                        <div className="flex text-sky-400 gap-7">
+                                             <div className="text-2xl flex gap-2">
+                                                  <MinusIcon
+                                                       onClick={decreaseQty}
+                                                       className="cursor-pointer"
+                                                  />
                                                   <span>{quantity}</span>
-                                                  <motion.div
-                                                       whileTap={{ scale: 0.9 }}
-                                                  >
-                                                       <PlusIcon
-                                                            onClick={
-                                                                 increaseQty
-                                                            }
-                                                            className="dark:text-white hover:scale-150 text-gray-500 size-4 mt-2 cursor-pointer"
-                                                       />
-                                                  </motion.div>
+                                                  <PlusIcon
+                                                       onClick={increaseQty}
+                                                       className="cursor-pointer"
+                                                  />
                                              </div>
-                                             <span className="text-lg  md:text-2xl">
+                                             <span className="text-lg">
                                                   ₱ {product.price}
                                              </span>
                                         </div>
                                    </div>
-
-                                   <motion.div
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                   >
-                                        <Button
-                                             variant="outline"
-                                             className="dark:bg-gray-900 w-20 ml-4 hover:dark:bg-gray-800"
-                                        >
-                                             Add item
-                                        </Button>
-                                   </motion.div>
-                                   <div className="flex flex-col ml-7 items-end text-gray-400 justify-end w-11/12">
-                                        <p>Payment method - COD</p>
-                                        <p className="mr-3">
-                                             Subtotal - {1 + quantity - 1} item
-                                        </p>
-                                        <p>
-                                             Total amount - ₱{" "}
-                                             {product.price * quantity}
-                                        </p>
-                                   </div>
                               </motion.div>
                          </div>
                     </CardContent>
-                    <CardFooter>
-                         <motion.div
-                              className="flex ml-10 justify-end w-11/12 gap-5"
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.8, duration: 0.5 }}
-                         >
-                              <motion.button
-                                   className="bg-red-600  hover:bg-red-500 hover:cursor-not-allowed   text-white py-2 px-4 rounded relative"
-                                   whileHover={{ x: -500 }}
-                                   whileTap={{ scale: 0.95 }}
-                                   transition={{
-                                        type: "spring",
-                                        stiffness: 100,
-                                   }}
-                              >
-                                   Cancel
-                              </motion.button>
-                              <motion.button
-                                   onClick={handleSubmit}
-                                   className="bg-sky-700 hover:bg-sky-600 text-white py-2 px-4 rounded"
-                                   whileTap={{ scale: 0.95 }}
-                                   transition={{
-                                        type: "spring",
-                                        stiffness: 100,
-                                   }}
-                              >
-                                   {loading ? "Loading..." : "Place order"}
-                              </motion.button>
-                         </motion.div>
+                    <CardFooter className="flex justify-end gap-5">
+                         <Button variant="destructive">Cancel</Button>
+                         <Button onClick={handleSubmit} disabled={loading}>
+                              {loading ? "Processing..." : "Place Order"}
+                         </Button>
                     </CardFooter>
                </Card>
           </motion.div>

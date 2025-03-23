@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 import QueryProvider from "@/components/QueryProvider";
 import { Toaster } from "react-hot-toast";
-import { SyncUser } from "./actions/users/SyncUser";
+
 
 const geistSans = Geist({
      variable: "--font-geist-sans",

@@ -28,7 +28,7 @@ const OrderPage = ({ params }: { params: Promise<{ id: string }> }) => {
                setId(id);
           };
           fetchParams();
-     }, []);
+     }, [params]);
 
      const { data, isLoading, isError } = useQuery({
           queryKey: ["ProductToBuy", id],

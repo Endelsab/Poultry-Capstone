@@ -18,6 +18,7 @@ import { DisplayProduct } from "@/app/actions/product/displayProduct";
 import SkeletonTable from "./SkeletonTable";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 export function ProductCard() {
      const { data, isLoading, isError } = useQuery({
@@ -70,8 +71,10 @@ export function ProductCard() {
                                         </CardDescription>
                                    </CardHeader>
                                    <CardContent className="flex justify-center">
-                                        <img
-                                             className="size-auto object-cover rounded-lg"
+                                        <Image
+                                             width={200}
+                                             height={100}
+                                             className=" object-cover rounded-lg"
                                              src={"/small.jpg"}
                                              alt={`${product.productSize} image`}
                                         />
