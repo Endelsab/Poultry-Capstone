@@ -1,25 +1,37 @@
 "use server";
 
+import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 
 export async function ProductToBuy(id: string) {
      try {
-          const product = await prisma.product.findFirst({
-               where: {
-                    id,
-               },
+          const { userId } = await auth();
+
+          if (!userId) return { success: false, message: "Unauthorized" };
+
+          const user = await prisma.user.findUnique({
+               where: { clerkId: userId },
+               select: { id: true, role: true },
           });
 
-          if (!product)
-               return { success: false, message: "Product does not exist" };
+          if (!user || user.role !== "customer")
+               return { success: false, message: "Forbidden" };
+
+          const product = await prisma.product.findUnique({ where: { id } });
+
+          if (!product) notFound();
 
           return {
                success: true,
-               message: "fetch successfully",
-               product: product,
+               message: "Fetch successfully",
+               product,
           };
      } catch (error: any) {
-          console.log("error in ProductToBuy", error);
-          return { success: false, message: error.message };
+          console.error("Error in ProductToBuy", error);
+          return {
+               success: false,
+               message: "Something went wrong. Please try again later.",
+          };
      }
 }

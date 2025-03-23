@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, use } from "react";
 import SkeletonTable from "@/components/SkeletonTable";
 import OrderCard from "@/components/OrderCard";
 import { useQuery } from "@tanstack/react-query";
@@ -11,34 +11,28 @@ import { ProductToBuy } from "@/app/actions/order/productToBuy";
 const OrderPage = ({ params }: { params: Promise<{ id: string }> }) => {
      const { user, isLoaded, isSignedIn } = useUser();
      const router = useRouter();
-
-     const [id, setId] = useState("");
+     const { id } = use(params);
 
      useEffect(() => {
-          if (isLoaded) {
-               if (!isSignedIn || user?.publicMetadata?.role === "admin") {
-                    router.push("/");
-               }
+          if (
+               isLoaded &&
+               (!isSignedIn || user?.publicMetadata?.role === "admin")
+          ) {
+               router.push("/");
           }
      }, [isLoaded, isSignedIn, user, router]);
-
-     useEffect(() => {
-          const fetchParams = async () => {
-               const { id } = await params;
-               setId(id);
-          };
-          fetchParams();
-     }, [params]);
 
      const { data, isLoading, isError } = useQuery({
           queryKey: ["ProductToBuy", id],
           queryFn: () => ProductToBuy(id),
+          enabled: !!id,
      });
 
      if (!isLoaded || isLoading) return <SkeletonTable />;
 
      if (!id || !data?.success || !data?.product || isError) {
-          return <p className="text-red-500">Error fetching product data.</p>;
+          router.replace("/");
+          return null;
      }
 
      console.log("data here :", data?.product);

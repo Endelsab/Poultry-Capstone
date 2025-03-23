@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 export async function OrderHistory() {
      try {
@@ -47,6 +48,9 @@ export async function OrderHistory() {
                     order: [],
                };
           }
+
+
+          revalidatePath("/admin/orders")
 
           return {
                success: true,
