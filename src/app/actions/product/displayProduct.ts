@@ -6,7 +6,7 @@ export async function DisplayProduct() {
      try {
           const products = await prisma.product.findMany({
                orderBy: {
-                    productName: "asc",
+                    productSize: "desc",
                },
           });
 

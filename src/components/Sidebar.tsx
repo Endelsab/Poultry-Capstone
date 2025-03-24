@@ -18,14 +18,14 @@ export default function Sidebar() {
      const router = useRouter();
 
      const menuItems = [
-          { name: "Products", icon: <TbEggs />, path: "/admin" },
+          { name: "Products", icon: <TbEggs />, path: "/admin/products" },
 
           {
                name: "Orders",
                icon: <FaShoppingCart />,
                path: "/admin/orders",
           },
-          { name: "Sales", icon: <FaChartLine />, path: "/dashboard/sales" },
+          { name: "Sales", icon: <FaChartLine />, path: "/admin/sales" },
           {
                name: "Customers",
                icon: <FaUsers />,

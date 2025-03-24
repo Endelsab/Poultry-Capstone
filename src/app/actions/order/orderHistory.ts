@@ -26,6 +26,7 @@ export async function OrderHistory() {
                               createdAt: "desc",
                          },
                          select: {
+                              createdAt: true,
                               deliverySched: true,
                               quantity: true,
                               totalPrice: true,
@@ -49,8 +50,7 @@ export async function OrderHistory() {
                };
           }
 
-
-          revalidatePath("/admin/orders")
+          revalidatePath("/admin/orders");
 
           return {
                success: true,

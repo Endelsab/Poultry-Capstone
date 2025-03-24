@@ -28,6 +28,7 @@ import { PlaceOrder } from "@/app/actions/order/placeOrder";
 import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Products = {
      id: string;
@@ -52,7 +53,7 @@ function OrderCard({ product }: { product: Products }) {
      const [quantity, setQuantity] = useState(1);
 
      const [fullname, setFullname] = useState("");
-     const [email, setEmail] = useState("");
+
      const [address, setAddress] = useState(" Brgy, Purok and Street ");
 
      const [open, setOpen] = useState(false);
@@ -60,7 +61,11 @@ function OrderCard({ product }: { product: Products }) {
      const [loading, setLoading] = useState(false);
 
      const increaseQty = () => {
-          if (quantity < product.stock) setQuantity(quantity + 1);
+          if (quantity < product.stock) {
+               setQuantity(quantity + 1);
+          } else {
+               toast.error("Insufficient stock");
+          }
      };
 
      const decreaseQty = () => {
@@ -68,6 +73,8 @@ function OrderCard({ product }: { product: Products }) {
      };
 
      const router = useRouter();
+
+     const queryClient = useQueryClient();
 
      const handleSubmit = async () => {
           setLoading(true);
@@ -78,15 +85,17 @@ function OrderCard({ product }: { product: Products }) {
                     productId: product.id,
                     quantity: quantity,
                     fullName: fullname,
-                    email: email,
+
                     address: address,
                });
 
                if (result.success) {
                     toast.success(result.message);
+                    queryClient.invalidateQueries({ queryKey: ["orders"] });
+
                     router.push("/success");
                } else {
-                    toast.error(result.message);
+                    toast.error("Add your address.");
                }
           } catch (error) {
                console.log("error in handlesubmit in order placed", error);
@@ -129,8 +138,7 @@ function OrderCard({ product }: { product: Products }) {
                                    </h2>
                                    <div>
                                         <span className="text-sky-400 ">
-                                             {fullname} <br />
-                                             {email}
+                                             {fullname}
                                         </span>
                                         <p className="text-sky-500">
                                              {address}
@@ -172,24 +180,7 @@ function OrderCard({ product }: { product: Products }) {
                                                             className="mt-2 border-gray-900 dark:border-sky-900"
                                                             id="Fullname"
                                                        />
-                                                       <Label
-                                                            className="text-start"
-                                                            htmlFor="email"
-                                                       >
-                                                            Email*
-                                                       </Label>
-                                                       <Input
-                                                            value={email}
-                                                            onChange={(e) =>
-                                                                 setEmail(
-                                                                      e.target
-                                                                           .value
-                                                                 )
-                                                            }
-                                                            type="email"
-                                                            className="mt-2 border-gray-900 dark:border-sky-900"
-                                                            id="email"
-                                                       />
+
                                                        <Label
                                                             className="text-start"
                                                             htmlFor="address"
@@ -214,7 +205,7 @@ function OrderCard({ product }: { product: Products }) {
                                              <AlertDialogAction
                                                   onClick={() => {
                                                        setFullname(fullname);
-                                                       setEmail(email);
+
                                                        setAddress(address);
                                                        setOpen(false);
                                                   }}

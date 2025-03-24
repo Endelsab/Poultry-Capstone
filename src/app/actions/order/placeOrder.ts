@@ -1,52 +1,63 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-
-function validateOrderInput(fullName: string, email: string, address: string) {
-     if (!fullName.trim()) return "Full name is required";
-     if (!email.trim()) return "Email is required";
-     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-          return "Invalid email format";
-     if (!address.trim() || address.length < 10)
-          return "Address must be at least 10 characters";
-     return null;
-}
+import { revalidatePath } from "next/cache";
 
 export async function PlaceOrder({
      userId,
      productId,
      quantity,
      fullName,
-     email,
      address,
 }: {
      userId: string;
      productId: string;
      quantity: number;
      fullName: string;
-     email: string;
      address: string;
 }) {
      try {
-          const validationError = validateOrderInput(fullName, email, address);
-          if (validationError) {
-               return { success: false, message: validationError };
+          if (!userId || !productId || !quantity || !fullName || !address) {
+               return { success: false, message: "All fields are required." };
+          }
+
+          if (typeof quantity !== "number" || quantity <= 0) {
+               return { success: false, message: "Invalid quantity." };
+          }
+
+          if (fullName.trim().length < 3) {
+               return {
+                    success: false,
+                    message: "Full name must be at least 3 characters long.",
+               };
+          }
+
+          if (address.trim().length < 5) {
+               return {
+                    success: false,
+                    message: "Address must be at least 5 characters long.",
+               };
           }
 
           const user = await prisma.user.findUnique({
                where: { clerkId: userId },
+               select: {
+                    id: true,
+                    email: true,
+               },
           });
 
-          if (!user) return { success: false, message: "User not found" };
+          if (!user) return { success: false, message: "User not found." };
 
           const product = await prisma.product.findUnique({
                where: { id: productId },
           });
 
-          if (!product) return { success: false, message: "Product not found" };
+          if (!product)
+               return { success: false, message: "Product not found." };
 
           if (product.stock < quantity) {
-               return { success: false, message: "Insufficient stock" };
+               return { success: false, message: "Insufficient stock." };
           }
 
           const totalPrice = Math.ceil(product.price * quantity);
@@ -58,7 +69,7 @@ export async function PlaceOrder({
                     quantity,
                     totalPrice,
                     fullName,
-                    email,
+                    email: user.email,
                     address,
                },
           });
@@ -68,9 +79,18 @@ export async function PlaceOrder({
                data: { stock: product.stock - quantity },
           });
 
-          return { success: true, message: "Order placed successfully", order };
+          revalidatePath("/");
+
+          return {
+               success: true,
+               message: "Order placed successfully.",
+               order,
+          };
      } catch (error) {
-          console.error("Error in PlaceOrder", error);
-          return { success: false, message: "Cannot place order" };
+          console.error("Error in PlaceOrder:", error);
+          return {
+               success: false,
+               message: "Cannot place order. Please try again later.",
+          };
      }
 }

@@ -13,6 +13,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useQuery } from "@tanstack/react-query";
 import SkeletonTable from "./SkeletonTable";
+import { format } from "date-fns";
+import { useEffect } from "react";
+import { motion } from "framer-motion";
 
 type OrderInvoiceType = {
      isOpen: boolean;
@@ -20,19 +23,23 @@ type OrderInvoiceType = {
 };
 
 function OrderInvoice({ isOpen, onClose }: OrderInvoiceType) {
-     const { data, isLoading, isError } = useQuery({
+     const { data, isLoading, isError, refetch } = useQuery({
           queryKey: ["orderHistory"],
           queryFn: () => OrderHistory(),
-
-          refetchOnWindowFocus: true,
      });
+
+     useEffect(() => {
+          if (isOpen) {
+               refetch();
+          }
+     }, [isOpen, refetch]);
 
      if (isLoading) return <SkeletonTable />;
      if (isError) return <p>Cannot fetch data</p>;
 
      return (
           <AlertDialog open={isOpen} onOpenChange={onClose}>
-               <AlertDialogContent className="max-w-md bg-white dark:bg-gray-900">
+               <AlertDialogContent className="max-w-lg bg-white dark:bg-gray-900">
                     <AlertDialogHeader>
                          <AlertDialogTitle className="text-center">
                               Order History
@@ -40,111 +47,131 @@ function OrderInvoice({ isOpen, onClose }: OrderInvoiceType) {
                     </AlertDialogHeader>
 
                     <div className="max-h-[400px] overflow-y-auto px-2">
-                         {data?.order.map(
-                              (
-                                   order,
-                                   index // Example: 10 orders for testing
-                              ) => (
-                                   <Card key={index} className="w-full mt-5">
+                         {data?.order.map((order, index) => (
+                              <motion.div
+                                   key={index}
+                                   initial={{ opacity: 0, y: 20 }}
+                                   animate={{ opacity: 1, y: 0 }}
+                                   transition={{
+                                        duration: 0.3,
+                                        delay: index * 0.1,
+                                   }}
+                              >
+                                   <Card className="w-full mt-5">
                                         <CardHeader>
-                                             <CardTitle className="text-gray-400">
+                                             <CardTitle className="text-gray-400 text-center">
                                                   Order Invoice -{" "}
-                                                  {order.deliverySched}
+                                                  {format(
+                                                       new Date(
+                                                            order.createdAt
+                                                       ),
+                                                       "MMMM dd, yyyy"
+                                                  )}
                                              </CardTitle>
                                         </CardHeader>
                                         <CardContent>
-                                             <div className="flex text-sm justify-between mt-4 w-full items-center">
-                                                  <div className="flex flex-col ">
-                                                       <Label
-                                                            htmlFor="item "
-                                                            className="text-gray-400"
-                                                       >
+                                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                                                  {/* Item Column */}
+                                                  <div className="flex flex-col items-center sm:items-start">
+                                                       <Label className="text-gray-400">
                                                             Item
                                                        </Label>
-                                                       <p
-                                                            id="item"
-                                                            className="mt-5"
-                                                       >
+                                                       <p className="font-medium text-center sm:text-left mt-1">
                                                             {
                                                                  order.product
                                                                       .productName
-                                                            }
+                                                            }{" "}
+                                                            (
                                                             {
                                                                  order.product
                                                                       .productSize
                                                             }
+                                                            )
                                                        </p>
                                                   </div>
 
-                                                  <div>
-                                                       <p className="text-gray-400">
-                                                            Qty{" "}
-                                                       </p>
-                                                       <p className="text-center mt-5">
+                                                  {/* Quantity Column */}
+                                                  <div className="flex flex-col items-center">
+                                                       <Label className="text-gray-400">
+                                                            Qty
+                                                       </Label>
+                                                       <p className="mt-1">
                                                             {order.quantity}
                                                        </p>
                                                   </div>
-                                                  <div>
-                                                       <p className="text-gray-400">
-                                                            Total Amount{" "}
-                                                       </p>
-                                                       <p className="ml-5 mt-5">
+
+                                                  {/* Total Amount Column */}
+                                                  <div className="flex flex-col items-center">
+                                                       <Label className="text-gray-400">
+                                                            Total Amount
+                                                       </Label>
+                                                       <p className="mt-1 font-semibold md:mr-5">
                                                             ₱ {order.totalPrice}
                                                        </p>
                                                   </div>
-                                                  <div>
-                                                       <p className="ml-7 mb-5 text-gray-400">
-                                                            Status{" "}
+
+                                                  {/* Status Column */}
+                                                  <div className="flex flex-col items-center sm:items-start">
+                                                       <Label className="text-gray-400">
+                                                            Status
+                                                       </Label>
+                                                       <p className="mt-1 text-center sm:text-left">
+                                                            {order.status ===
+                                                                 "PENDING" && (
+                                                                 <span className="text-gray-500">
+                                                                      Pending
+                                                                 </span>
+                                                            )}
+                                                            {order.status ===
+                                                                 "APPROVED" && (
+                                                                 <span className="text-sky-500">
+                                                                      Approved -
+                                                                      waiting
+                                                                      for
+                                                                      delivery
+                                                                 </span>
+                                                            )}
+                                                            {order.status ===
+                                                                 "DELIVERY" && (
+                                                                 <span className="text-orange-500">
+                                                                      Out for
+                                                                      delivery -{" "}
+                                                                      {
+                                                                           order.deliverySched
+                                                                      }
+                                                                 </span>
+                                                            )}
+                                                            {order.status ===
+                                                                 "HISTORY" && (
+                                                                 <span className="text-emerald-500 text-sm">
+                                                                      Order
+                                                                      received{" "}
+                                                                      <br />{" "}
+                                                                      {
+                                                                           order.deliverySched
+                                                                      }
+                                                                 </span>
+                                                            )}
+                                                            {order.status ===
+                                                                 "DECLINED" && (
+                                                                 <span className="text-red-500">
+                                                                      Order not
+                                                                      approved.
+                                                                 </span>
+                                                            )}
                                                        </p>
-                                                       {order.status ===
-                                                            "PENDING" && (
-                                                            <p className="text-gray-500">
-                                                                 Pending
-                                                            </p>
-                                                       )}
-
-                                                       {order.status ===
-                                                            "APPROVED" && (
-                                                            <p className="text-sky-500">
-                                                                 Approved -
-                                                                 waiting for
-                                                                 delivery
-                                                            </p>
-                                                       )}
-                                                       {order.status ===
-                                                            "DELIVERY" && (
-                                                            <p className="text-orange-500">
-                                                                 Your item is
-                                                                 out for
-                                                                 delivery
-                                                            </p>
-                                                       )}
-
-                                                       {order.status ===
-                                                            "HISTORY" && (
-                                                            <p className="text-emerald-500">
-                                                                 Order received
-                                                            </p>
-                                                       )}
-                                                       {order.status ===
-                                                            "DECLINED" && (
-                                                            <p className="text-red-500">
-                                                                 Your order is
-                                                                 not approved.
-                                                            </p>
-                                                       )}
                                                   </div>
                                              </div>
                                         </CardContent>
                                    </Card>
-                              )
-                         )}
+                              </motion.div>
+                         ))}
                     </div>
 
                     <AlertDialogFooter className="flex items-end">
                          <Button
-                              className="mr-8 text-black bg-sky-600 hover:bg-sky-500"
-                              onClick={() => onClose()}
+                              className="w-full sm:w-auto text-white bg-sky-600 hover:bg-sky-500"
+                              onClick={onClose}
                          >
                               Go back
                          </Button>

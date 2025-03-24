@@ -24,8 +24,6 @@ export function ProductCard() {
      const { data, isLoading, isError } = useQuery({
           queryKey: ["products"],
           queryFn: () => DisplayProduct(),
-
-          refetchOnWindowFocus: true,
      });
 
      const router = useRouter();

@@ -30,7 +30,11 @@ function SuccessPage() {
                     confirmation shortly.
                </p>
 
-               <Button onClick={() => redirect("/")} variant="default">
+               <Button
+                    className="text-slate-100 bg-sky-700"
+                    onClick={() => redirect("/")}
+                    variant="default"
+               >
                     Continue Shopping
                </Button>
           </motion.div>

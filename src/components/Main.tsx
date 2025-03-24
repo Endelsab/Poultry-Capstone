@@ -42,7 +42,7 @@ const Main = () => {
                          variants={childVariants}
                          className=" text-4xl  md:text-5xl font-bold text-sky-500 leading-tight"
                     >
-                         Yulo&apos;s Poultry Farm <br /> An Online Ordering
+                         Yulo&apos;s Poultry Farm : <br /> An Online Ordering
                          Platform for Poultry
                          <span className="text-emerald-500 ml-2">
                               <Typewriter

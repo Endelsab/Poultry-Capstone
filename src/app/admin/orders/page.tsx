@@ -42,6 +42,7 @@ import {
 import { ApproveOrder } from "@/app/actions/order/approvedOrder";
 import SchedCard from "@/components/SchedCard";
 import { OrderReceived } from "@/app/actions/order/orderRecieve";
+import { DeclineOrder } from "@/app/actions/order/declineOrder";
 
 function Orders() {
      const [page, setPage] = useState(1);
@@ -69,6 +70,9 @@ function Orders() {
                if (result.success) {
                     toast.success(result.message);
                     queryClient.invalidateQueries({ queryKey: ["orders"] });
+                    queryClient.invalidateQueries({
+                         queryKey: ["orderHistory"],
+                    });
                } else {
                     toast.error(result.message);
                }
@@ -93,6 +97,25 @@ function Orders() {
                }
           } catch (error) {
                console.log("error in handleReceive", error);
+          } finally {
+               setLoading(false);
+          }
+     };
+
+     const handleDecline = async (orderId: string) => {
+          setLoading(true);
+
+          try {
+               const result = await DeclineOrder(orderId);
+
+               if (result.success) {
+                    toast.success(result.message);
+                    queryClient.invalidateQueries({ queryKey: ["orders"] });
+               } else {
+                    toast.error(result.message);
+               }
+          } catch (error) {
+               console.log("error in handleDecline", error);
           } finally {
                setLoading(false);
           }
@@ -224,6 +247,11 @@ function Orders() {
                                                             <>
                                                                  {" "}
                                                                  <Button
+                                                                      onClick={() =>
+                                                                           handleDecline(
+                                                                                order.id
+                                                                           )
+                                                                      }
                                                                       size={
                                                                            "sm"
                                                                       }
@@ -297,7 +325,7 @@ function Orders() {
 
                                                        {order.status ===
                                                             "HISTORY" && (
-                                                            <span className="text-emerald-500">
+                                                            <span className="text-emerald-400">
                                                                  Order received{" "}
                                                                  <br />
                                                                  {
@@ -308,16 +336,9 @@ function Orders() {
 
                                                        {order.status ===
                                                             "DECLINED" && (
-                                                            <Button
-                                                                 disabled
-                                                                 size={"sm"}
-                                                                 variant={
-                                                                      "outline"
-                                                                 }
-                                                                 className=" bg-gray-900"
-                                                            >
+                                                            <p className=" text-red-400">
                                                                  Declined order
-                                                            </Button>
+                                                            </p>
                                                        )}
                                                   </div>
                                              </TableCell>

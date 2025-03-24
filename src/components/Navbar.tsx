@@ -139,7 +139,7 @@ const Navbar = () => {
                               ease: "easeInOut",
                               delay: 0.2,
                          }}
-                         className="md:hidden flex justify-between   items-center   p-6  border-t shadow-lg rounded-lg"
+                         className="md:hidden flex gap-4 flex-col  items-center   p-6  border-t shadow-lg rounded-lg"
                     >
                          <Modetoggle />
 
