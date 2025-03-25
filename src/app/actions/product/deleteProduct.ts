@@ -33,8 +33,8 @@ export async function DeleteProduct(id: string) {
                success: true,
                message: "Product deleted successfully",
           };
-     } catch (error: any) {
-          console.log("Error in DeleteProduct:", error.message);
+     } catch (error) {
+          console.log("Error in DeleteProduct:", error);
           return { success: false, message: "Internal Server Error" };
      }
 }

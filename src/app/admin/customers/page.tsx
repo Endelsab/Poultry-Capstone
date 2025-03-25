@@ -143,7 +143,10 @@ function Customers() {
 
                                                        <TableCell>
                                                             <div className="flex gap-2 justify-end">
-                                                                 <Button size={"sm"}
+                                                                 <Button
+                                                                      size={
+                                                                           "sm"
+                                                                      }
                                                                       onClick={() =>
                                                                            handleBlock(
                                                                                 customer.id
@@ -153,12 +156,9 @@ function Customers() {
                                                                       className={`hover:bg-red-500 transition ease-in-out `}
                                                                  >
                                                                       <BsFillPersonXFill />
-                                                                      {(
-                                                                           blocking
-                                                                      ) ?
-                                                                           "Blocking..."
-                                                                      :    "Block"
-                                                                      }
+                                                                      {blocking
+                                                                           ? "Blocking..."
+                                                                           : "Block"}
                                                                  </Button>
                                                             </div>
                                                        </TableCell>

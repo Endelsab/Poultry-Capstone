@@ -15,8 +15,8 @@ export async function DisplayProduct() {
                message: "Fetched products successfully",
                products,
           };
-     } catch (error: any) {
-          console.log("Error in DisplayProduct:", error.message);
+     } catch (error) {
+          console.log("Error in DisplayProduct:", error);
           return {
                success: false,
                message: "Failed to fetch products",

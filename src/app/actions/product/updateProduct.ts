@@ -60,8 +60,8 @@ export async function UpdateProduct(
           revalidatePath("/admin");
 
           return { success: true, message: "Updated product successfully" };
-     } catch (error: any) {
-          console.error("Error in UpdateProduct:", error.message);
+     } catch (error) {
+          console.error("Error in UpdateProduct:", error);
           return { success: false, message: "Internal Server Error" };
      }
 }

@@ -41,8 +41,8 @@ export async function AddProduct(prevState: string, formData: FormData) {
                success: true,
                message: "Added product successfully",
           };
-     } catch (error: any) {
-          console.log("Error in AddProduct:", error.message);
+     } catch (error) {
+          console.log("Error in AddProduct:", error);
           return { success: false, message: "Internal Server Error" };
      }
 }

@@ -19,9 +19,12 @@ import SkeletonTable from "./SkeletonTable";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { useUser } from "@clerk/nextjs";
 
 export function ProductCard() {
-     const { data, isLoading, isError } = useQuery({
+     const { user, isLoaded } = useUser();
+
+     const { data, isLoading, isError, refetch } = useQuery({
           queryKey: ["products"],
           queryFn: () => DisplayProduct(),
      });
@@ -30,9 +33,12 @@ export function ProductCard() {
 
      const handleBuyNow = (id: string, stock: number) => {
           if (stock === 0) return toast.error("Insufficient stock");
+          if (!user) return toast.error("Please login first");
 
           router.push(`/orderPage/${id}`);
      };
+
+     if (!isLoaded) return <SkeletonTable />;
 
      if (isLoading) return <SkeletonTable />;
 
@@ -49,6 +55,7 @@ export function ProductCard() {
                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 w-full px-4 md:px-14 mt-10">
                     {data.products.map((product, index) => (
                          <motion.div
+                              onViewportEnter={() => refetch()}
                               key={index}
                               initial={{ opacity: 0, y: 50 }}
                               whileInView={{ opacity: 1, y: 0 }}
@@ -77,11 +84,13 @@ export function ProductCard() {
                                              alt={`${product.productSize} image`}
                                         />
                                    </CardContent>
-                                   <CardFooter className="flex flex-col gap-3">
-                                        <div className="flex justify-between w-full px-4 text-sky-500 font-semibold">
-                                             <p>₱ {product.price}</p>
+                                   <CardFooter className="flex  flex-col gap-3">
+                                        <div className="flex justify-center items-center gap-7 md:justify-between w-[200px]  text-sky-500 font-semibold">
+                                             <p className="md:ml-4 ">
+                                                  ₱ {product.price}
+                                             </p>
 
-                                             <ShoppingCart className=" hover:scale-125 transition ease-in-out  hover:text-emerald-400 cursor-pointer" />
+                                             <ShoppingCart className="  hover:scale-125 md:mr-4 transition ease-in-out  hover:text-emerald-400 cursor-pointer" />
                                         </div>
                                         <Button
                                              onClick={() =>

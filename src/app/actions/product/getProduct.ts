@@ -54,8 +54,8 @@ export async function GetProducts(
                products,
                hasMore,
           };
-     } catch (error: any) {
-          console.log("Error in GetProducts:", error.message);
+     } catch (error) {
+          console.log("Error in GetProducts:", error);
           return {
                success: false,
                message: "Internal Server Error",

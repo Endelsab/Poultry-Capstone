@@ -42,14 +42,6 @@ type Products = {
 function OrderCard({ product }: { product: Products }) {
      const { user, isLoaded } = useUser();
 
-     if (!isLoaded) return <p>cannot load user</p>;
-     const userId = user?.id;
-
-     if (!userId) {
-          toast.error("User not found. Please log in.");
-          return;
-     }
-
      const [quantity, setQuantity] = useState(1);
 
      const [fullname, setFullname] = useState("");
@@ -59,6 +51,18 @@ function OrderCard({ product }: { product: Products }) {
      const [open, setOpen] = useState(false);
 
      const [loading, setLoading] = useState(false);
+
+     const router = useRouter();
+
+     const queryClient = useQueryClient();
+
+     if (!isLoaded) return <p>cannot load user</p>;
+     const userId = user?.id;
+
+     if (!userId) {
+          toast.error("User not found. Please log in.");
+          return;
+     }
 
      const increaseQty = () => {
           if (quantity < product.stock) {
@@ -71,10 +75,6 @@ function OrderCard({ product }: { product: Products }) {
      const decreaseQty = () => {
           if (quantity > 1) setQuantity(quantity - 1);
      };
-
-     const router = useRouter();
-
-     const queryClient = useQueryClient();
 
      const handleSubmit = async () => {
           setLoading(true);
@@ -140,7 +140,7 @@ function OrderCard({ product }: { product: Products }) {
                                         <span className="text-sky-400 ">
                                              {fullname}
                                         </span>
-                                        <p className="text-sky-500">
+                                        <p className="text-sky-400">
                                              {address}
                                         </p>
 
@@ -157,9 +157,8 @@ function OrderCard({ product }: { product: Products }) {
                               <AlertDialog open={open}>
                                    <AlertDialogContent className="bg-slate-200 rounded-md dark:bg-slate-900">
                                         <AlertDialogHeader>
-                                             <AlertDialogTitle>
-                                                  Please add your personal
-                                                  details
+                                             <AlertDialogTitle className="text-center">
+                                                  Complete your details
                                              </AlertDialogTitle>
                                              <AlertDialogDescription asChild>
                                                   <div className="flex flex-col gap-3 pt-5">
@@ -215,102 +214,74 @@ function OrderCard({ product }: { product: Products }) {
                                         </AlertDialogFooter>
                                    </AlertDialogContent>
                               </AlertDialog>
+                         </div>
 
-                              <motion.div
-                                   className="flex flex-col mt-5 dark:bg-gray-900 p-2 gap-3 rounded-md"
-                                   initial={{ opacity: 0, x: -50 }}
-                                   animate={{ opacity: 1, x: 0 }}
-                                   transition={{ delay: 0.6, duration: 0.5 }}
-                              >
-                                   <div className="flex justify-between text-gray-400 ">
-                                        <h2>Item Shipped:</h2>
-                                        <div className="flex gap-12 mr-10 ">
-                                             <p className="mr-3">QTY</p>
-                                             <span className="">Price</span>
-                                        </div>
+                         <Card className="w-full mt-5 dark:bg-gray-900 max-w-lg mx-auto    shadow-lg rounded-md ">
+                              {/* Header */}
+                              <CardHeader className="border-b pb-3 w-full ">
+                                   <div className="flex justify-between md:gap-16 text-gray-500 text-sm md:text-base">
+                                        <h2>Item Shipped</h2>
+                                        <h2>QTY</h2>
+                                        <h2>Price</h2>
                                    </div>
-
-                                   <div className="flex justify-between p-2">
-                                        <div className="flex gap-5 items-center">
-                                             <motion.img
-                                                  className="size-24 rounded-full"
-                                                  src={
-                                                       product.img ??
-                                                       "/small.jpg"
-                                                  }
-                                                  alt={product.productName}
-                                                  whileHover={{ scale: 1.05 }}
-                                             />
-                                             <p className="text-sky-400 text-md md:text-xl mr-10">
+                              </CardHeader>
+                              {/* Product Details */}
+                              <CardContent className=" gap-4 py-4 ">
+                                   <div className="flex justify-between  w-[280px] md:w-[350px]  text-center ">
+                                        <div>
+                                             <p className="text-sm md:text-lg font-semibold text-sky-500">
                                                   {product.productName} -{" "}
                                                   {product.productSize}
                                              </p>
                                         </div>
 
-                                        <div className="flex  text-sky-400 gap-7 mt-7">
-                                             <div className="text-2xl flex justify-center gap-2">
-                                                  <motion.div
-                                                       whileTap={{ scale: 0.9 }}
-                                                  >
-                                                       <MinusIcon
-                                                            onClick={
-                                                                 decreaseQty
-                                                            }
-                                                            className="dark:text-white text-gray-500 hover:scale-150 size-4 mt-2 cursor-pointer"
-                                                       />
-                                                  </motion.div>
-                                                  <span>{quantity}</span>
-                                                  <motion.div
-                                                       whileTap={{ scale: 0.9 }}
-                                                  >
-                                                       <PlusIcon
-                                                            onClick={
-                                                                 increaseQty
-                                                            }
-                                                            className="dark:text-white hover:scale-150 text-gray-500 size-4 mt-2 cursor-pointer"
-                                                       />
-                                                  </motion.div>
-                                             </div>
-                                             <span className="text-lg  md:text-2xl">
+                                        <div className="flex ml-10 gap-2  ">
+                                             <MinusIcon
+                                                  onClick={decreaseQty}
+                                                  className="size-4 md:size-5 mt-1 hover:scale-125"
+                                             />
+
+                                             <p className="text-xl md:text-2xl text-sky-400  ">
+                                                  {quantity}
+                                             </p>
+
+                                             <PlusIcon
+                                                  onClick={increaseQty}
+                                                  className="size-4 md:size-5 mt-1 hover:scale-125"
+                                             />
+                                        </div>
+
+                                        <div>
+                                             {" "}
+                                             <p className="md:text-xl text-sm text-sky-500 font-bold ml-7">
                                                   ₱ {product.price}
-                                             </span>
+                                             </p>
                                         </div>
                                    </div>
-
-                                   <motion.div
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                   >
-                                        <Button
-                                             variant="outline"
-                                             className="dark:bg-gray-900 w-20 ml-4 hover:dark:bg-gray-800"
-                                        >
-                                             Add item
-                                        </Button>
-                                   </motion.div>
-                                   <div className="flex flex-col ml-7 items-end text-gray-400 justify-end w-11/12">
-                                        <p>Payment method - COD</p>
-                                        <p className="mr-3">
-                                             Subtotal - {1 + quantity - 1} item
-                                        </p>
-                                        <p>
-                                             Total amount - ₱{" "}
-                                             {product.price * quantity}
-                                        </p>
-                                   </div>
-                              </motion.div>
-                         </div>
+                              </CardContent>
+                              <CardFooter className="flex mt-7   flex-col items-center  border-t pt-3 text-gray-500 text-sm md:text-base">
+                                   <p>
+                                        Payment Method -{" "}
+                                        <span className="font-medium">COD</span>
+                                   </p>
+                                   <p>Subtotal - {quantity} item(s)</p>
+                                   <p className="text-lg font-semibold">
+                                        Total Amount - ₱{" "}
+                                        {product.price * quantity}
+                                   </p>
+                              </CardFooter>
+                         </Card>
                     </CardContent>
                     <CardFooter>
                          <motion.div
-                              className="flex ml-10 justify-end w-11/12 gap-5"
+                              className="flex mb-4 ml-10 justify-end w-11/12 gap-5"
                               initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: 0.8, duration: 0.5 }}
                          >
                               <motion.button
-                                   className="bg-red-600  hover:bg-red-500 hover:cursor-not-allowed   text-white py-2 px-4 rounded relative"
-                                   whileHover={{ x: -500 }}
+                                   onClick={() => router.push("/")}
+                                   className="bg-red-600   hover:bg-red-500   text-white py-2 px-4 rounded relative"
                                    whileTap={{ scale: 0.95 }}
                                    transition={{
                                         type: "spring",

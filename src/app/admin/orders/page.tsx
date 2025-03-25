@@ -267,7 +267,11 @@ function Orders() {
                                                                                 order.id
                                                                            )
                                                                       }
-                                                                      className={`${loading ? "cursor-not-allowed disabled" : ""} hover:bg-sky-500 bg-sky-600 text-white font-sans `}
+                                                                      className={`${
+                                                                           loading
+                                                                                ? "cursor-not-allowed disabled"
+                                                                                : ""
+                                                                      } hover:bg-sky-500 bg-sky-600 text-white font-sans `}
                                                                       size={
                                                                            "sm"
                                                                       }
@@ -312,7 +316,11 @@ function Orders() {
                                                                                 order.id
                                                                            )
                                                                       }
-                                                                      className={`bg-yellow-600 mt-3 text-black font-semibold  ${loading ? "cursor-not-allowed disabled:bg-gray-800" : ""}  `}
+                                                                      className={`bg-yellow-600 mt-3 text-black font-semibold  ${
+                                                                           loading
+                                                                                ? "cursor-not-allowed disabled:bg-gray-800"
+                                                                                : ""
+                                                                      }  `}
                                                                       size={
                                                                            "sm"
                                                                       }

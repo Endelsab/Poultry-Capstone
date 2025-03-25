@@ -27,7 +27,7 @@ export async function ProductToBuy(id: string) {
                message: "Fetch successfully",
                product,
           };
-     } catch (error: any) {
+     } catch (error) {
           console.error("Error in ProductToBuy", error);
           return {
                success: false,

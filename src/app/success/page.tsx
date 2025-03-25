@@ -18,7 +18,7 @@ function SuccessPage() {
                initial={{ x: 100, opacity: 0 }}
                animate={{ x: 0, opacity: 1 }}
                transition={{ duration: 0.5, ease: "easeOut" }}
-               className="flex flex-col items-center justify-center min-h-screen text-center space-y-6"
+               className="flex flex-col items-center mt-24 md:mt-40 min-h-screen text-center space-y-6"
           >
                <CheckCircle className="w-16 h-16 text-green-500" />
 

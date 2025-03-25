@@ -123,9 +123,7 @@ const Navbar = () => {
                          className="md:hidden p-2 hover:text-sky-500 transition ease-in-out"
                          onClick={() => setMenuOpen(!menuOpen)}
                     >
-                         {menuOpen ?
-                              <X size={28} />
-                         :    <Menu size={28} />}
+                         {menuOpen ? <X size={28} /> : <Menu size={28} />}
                     </button>
                </motion.div>
 
