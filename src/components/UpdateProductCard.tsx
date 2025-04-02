@@ -64,9 +64,9 @@ function UpdateProductCard({
 
      return (
           <AlertDialog open={isOpen} onOpenChange={onClose}>
-               <AlertDialogContent>
+               <AlertDialogContent className="bg-white shadow-lg rounded-lg dark:bg-gray-900">
                     <AlertDialogHeader>
-                         <AlertDialogTitle className="text-center text-emerald-400">
+                         <AlertDialogTitle className="text-center text-slate-900 dark:text-emerald-500 ">
                               Update Product
                          </AlertDialogTitle>
                          <AlertDialogDescription className="text-center">

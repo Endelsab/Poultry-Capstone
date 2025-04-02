@@ -6,7 +6,7 @@ import { Modetoggle } from "./Modetoggle";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { Separator } from "./ui/separator";
+
 import {
      SignedIn,
      SignedOut,
@@ -61,7 +61,7 @@ const Navbar = () => {
                               <Link href="/admin">
                                    <Button
                                         variant="outline"
-                                        className="border-none hover:scale-105"
+                                        className="border-none hover:scale-105 mr-2"
                                    >
                                         Dashboard
                                    </Button>
@@ -97,14 +97,18 @@ const Navbar = () => {
                               </Link>
                          )}
 
-                         <Link href="/">
-                              <Button
-                                   variant="outline"
-                                   className="border-none mr-2 hover:scale-105"
-                              >
-                                   Home
-                              </Button>
-                         </Link>
+                         {role !== "admin" && (
+                              <Link href="/">
+                                   <Button
+                                        variant="outline"
+                                        className="border-none mr-2 hover:scale-105"
+                                   >
+                                        Home
+                                   </Button>
+                              </Link>
+                         )}
+
+
 
                          <SignedIn>
                               <UserButton />
@@ -188,38 +192,9 @@ const Navbar = () => {
                               </motion.div>
                          )}
 
-                         <motion.div
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                         >
-                              <Link href="/" onClick={() => setMenuOpen(false)}>
-                                   <Button
-                                        variant="outline"
-                                        className="border-none"
-                                   >
-                                        Home
-                                   </Button>
-                              </Link>
-                         </motion.div>
 
-                         {role === "admin" && (
-                              <>
-                                   <motion.div
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                   >
-                                        <Link
-                                             href="/admin"
-                                             onClick={() => setMenuOpen(false)}
-                                        >
-                                             <button className="hover:text-sky-500 transition ease-in-out">
-                                                  Dashboard
-                                             </button>
-                                        </Link>
-                                   </motion.div>
-                                   <Separator className="w-40" />
-                              </>
-                         )}
+
+
 
                          <SignedIn>
                               <motion.div

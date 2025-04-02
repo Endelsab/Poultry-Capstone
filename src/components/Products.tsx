@@ -270,7 +270,7 @@ function Products() {
                                                                       (prev) =>
                                                                            Math.max(
                                                                                 prev -
-                                                                                     1,
+                                                                                1,
                                                                                 1
                                                                            )
                                                                  )

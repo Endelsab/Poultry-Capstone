@@ -35,7 +35,7 @@ export async function AddProduct(prevState: string, formData: FormData) {
                data: { productName, productSize, stock, price },
           });
 
-          revalidatePath("/admin");
+          revalidatePath("/admin/products");
 
           return {
                success: true,

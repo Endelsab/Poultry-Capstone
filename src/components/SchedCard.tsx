@@ -51,9 +51,9 @@ function SchedCard({ isOpen, onClose, orderId }: SchedCardType) {
                open={isOpen}
                onOpenChange={(open) => !open && onClose()}
           >
-               <AlertDialogContent>
+               <AlertDialogContent className="bg-white text-black dark:bg-blue-950 dark:text-white">
                     <AlertDialogHeader>
-                         <AlertDialogTitle>
+                         <AlertDialogTitle className="text-center">
                               Schedule for Delivery
                          </AlertDialogTitle>
                          <AlertDialogDescription asChild>
@@ -64,7 +64,7 @@ function SchedCard({ isOpen, onClose, orderId }: SchedCardType) {
                                         onSelect={(selected) =>
                                              setDate(selected ?? new Date())
                                         }
-                                        className="rounded-md border shadow"
+                                        className="rounded-md border border-gray-700 shadow"
                                    />
                               </div>
                          </AlertDialogDescription>

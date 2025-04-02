@@ -26,6 +26,7 @@ export async function OrderHistory() {
                               createdAt: "desc",
                          },
                          select: {
+                              id: true,
                               createdAt: true,
                               deliverySched: true,
                               quantity: true,
@@ -35,6 +36,7 @@ export async function OrderHistory() {
                                    select: {
                                         productName: true,
                                         productSize: true,
+                                        price: true,
                                    },
                               },
                          },

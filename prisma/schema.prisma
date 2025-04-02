@@ -84,5 +84,6 @@ enum OrderStatus {
   APPROVED
   DELIVERY
   DECLINED
+  CANCELLED
   HISTORY
 }

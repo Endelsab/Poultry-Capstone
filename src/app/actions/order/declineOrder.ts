@@ -56,7 +56,7 @@ export async function DeclineOrder(orderId: string) {
                },
           });
 
-          const status = "Your order is declined .";
+          const status = "Your order is declined.";
 
           const { error } = await resend.emails.send({
                from: "onboarding@resend.dev",

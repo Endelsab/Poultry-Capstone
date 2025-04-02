@@ -11,11 +11,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import SkeletonTable from "./SkeletonTable";
 import { format } from "date-fns";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
+
+import toast from "react-hot-toast";
+import { CancelOrder } from "@/app/actions/order/cancelOrder";
 
 type OrderInvoiceType = {
      isOpen: boolean;
@@ -27,6 +30,27 @@ function OrderInvoice({ isOpen, onClose }: OrderInvoiceType) {
           queryKey: ["orderHistory"],
           queryFn: () => OrderHistory(),
      });
+
+     const queryClient = useQueryClient();
+
+
+
+     const handleCancel = async (id: string) => {
+          try {
+               const res = await CancelOrder(id)
+
+               if (res.success) {
+                    toast.success("Order Cancelled")
+                    queryClient.invalidateQueries({ queryKey: ["orderHistory"] });
+
+               } else {
+                    toast.error(res.message)
+               }
+
+          } catch (error) {
+               console.log("Error in handleCancel", error)
+          }
+     }
 
      useEffect(() => {
           if (isOpen) {
@@ -90,6 +114,15 @@ function OrderInvoice({ isOpen, onClose }: OrderInvoiceType) {
                                                        </p>
                                                   </div>
 
+                                                  <div className="flex flex-col items-center">
+                                                       <Label className="text-gray-400">
+                                                            Price
+                                                       </Label>
+                                                       <p className="mt-1">
+                                                            {order.product.price}
+                                                       </p>
+                                                  </div>
+
                                                   {/* Quantity Column */}
                                                   <div className="flex flex-col items-center">
                                                        <Label className="text-gray-400">
@@ -105,7 +138,7 @@ function OrderInvoice({ isOpen, onClose }: OrderInvoiceType) {
                                                        <Label className="text-gray-400">
                                                             Total Amount
                                                        </Label>
-                                                       <p className="mt-1 font-semibold md:mr-5">
+                                                       <p className="mt-1 font-semibold md:mr-10">
                                                             ₱ {order.totalPrice}
                                                        </p>
                                                   </div>
@@ -115,51 +148,66 @@ function OrderInvoice({ isOpen, onClose }: OrderInvoiceType) {
                                                        <Label className="text-gray-400">
                                                             Status
                                                        </Label>
-                                                       <p className="mt-1 text-center sm:text-left">
+                                                       <div className="mt-1 text-center sm:text-left">
                                                             {order.status ===
                                                                  "PENDING" && (
-                                                                 <span className="text-gray-500">
-                                                                      Pending
-                                                                 </span>
-                                                            )}
+                                                                      <div className="flex flex-col gap-1">
+                                                                           <span className="text-gray-500">
+                                                                                Pending
+                                                                           </span>
+
+                                                                           <Button onClick={() => handleCancel(order.id)} size={"sm"} variant={"destructive"}>
+                                                                                Cancel
+                                                                           </Button>
+
+                                                                      </div>
+
+                                                                 )}
+                                                            {order.status ===
+                                                                 "CANCELLED" && (
+                                                                      <span className="text-red-500">
+                                                                           Cancelled
+                                                                      </span>
+                                                                 )}
+
                                                             {order.status ===
                                                                  "APPROVED" && (
-                                                                 <span className="text-sky-500">
-                                                                      Approved -
-                                                                      waiting
-                                                                      for
-                                                                      delivery
-                                                                 </span>
-                                                            )}
+                                                                      <span className="text-sky-500">
+                                                                           Approved -
+                                                                           waiting
+                                                                           for
+                                                                           delivery
+                                                                      </span>
+                                                                 )}
                                                             {order.status ===
                                                                  "DELIVERY" && (
-                                                                 <span className="text-orange-500">
-                                                                      Out for
-                                                                      delivery -{" "}
-                                                                      {
-                                                                           order.deliverySched
-                                                                      }
-                                                                 </span>
-                                                            )}
+                                                                      <span className="text-orange-500">
+                                                                           Out for
+                                                                           delivery -{" "}
+                                                                           {
+                                                                                order.deliverySched
+                                                                           }
+                                                                      </span>
+                                                                 )}
                                                             {order.status ===
                                                                  "HISTORY" && (
-                                                                 <span className="text-emerald-500 text-sm">
-                                                                      Order
-                                                                      received{" "}
-                                                                      <br />{" "}
-                                                                      {
-                                                                           order.deliverySched
-                                                                      }
-                                                                 </span>
-                                                            )}
+                                                                      <span className="text-emerald-500 text-sm">
+                                                                           Order
+                                                                           received{" "}
+                                                                           <br />{" "}
+                                                                           {
+                                                                                order.deliverySched
+                                                                           }
+                                                                      </span>
+                                                                 )}
                                                             {order.status ===
                                                                  "DECLINED" && (
-                                                                 <span className="text-red-500">
-                                                                      Order not
-                                                                      approved.
-                                                                 </span>
-                                                            )}
-                                                       </p>
+                                                                      <span className="text-red-500">
+                                                                           Order not
+                                                                           approved.
+                                                                      </span>
+                                                                 )}
+                                                       </div>
                                                   </div>
                                              </div>
                                         </CardContent>

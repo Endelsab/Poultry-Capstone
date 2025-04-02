@@ -33,12 +33,12 @@ const DeleteDialog = ({
      return (
           <div className="flex items-center justify-center">
                <AlertDialog open={isOpen} onOpenChange={onClose}>
-                    <AlertDialogContent>
+                    <AlertDialogContent className="bg-white rounded-md shadow-md dark:bg-gray-900">
                          <AlertDialogHeader>
                               <AlertDialogTitle className="text-red-500 text-sm">
                                    Are you sure you want to delete ?
                               </AlertDialogTitle>
-                              <AlertDialogDescription className="text-2xl text-white">
+                              <AlertDialogDescription className="text-2xl text-black dark:text-white">
                                    {product.productName} - {product.productSize}
                               </AlertDialogDescription>
                          </AlertDialogHeader>
@@ -46,7 +46,7 @@ const DeleteDialog = ({
                               <AlertDialogCancel onClick={onClose}>
                                    Cancel
                               </AlertDialogCancel>
-                              <AlertDialogAction className="bg-red-700" asChild>
+                              <AlertDialogAction className="bg-red-900" asChild>
                                    <Button
                                         className="hover:bg-red-500 text-white font-semibold"
                                         variant={"destructive"}

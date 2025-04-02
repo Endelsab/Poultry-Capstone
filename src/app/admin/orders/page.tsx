@@ -244,110 +244,108 @@ function Orders() {
                                                   <div className="flex gap-2 justify-center">
                                                        {order.status ===
                                                             "PENDING" && (
-                                                            <>
-                                                                 {" "}
-                                                                 <Button
-                                                                      onClick={() =>
-                                                                           handleDecline(
-                                                                                order.id
-                                                                           )
-                                                                      }
-                                                                      size={
-                                                                           "sm"
-                                                                      }
-                                                                      variant="destructive"
-                                                                      className={`hover:bg-red-500 transition ease-in-out `}
-                                                                 >
-                                                                      <BsFillPersonXFill />
-                                                                      Decline
-                                                                 </Button>
-                                                                 <Button
-                                                                      onClick={() =>
-                                                                           handleApprove(
-                                                                                order.id
-                                                                           )
-                                                                      }
-                                                                      className={`${
-                                                                           loading
+                                                                 <>
+                                                                      {" "}
+                                                                      <Button
+                                                                           onClick={() =>
+                                                                                handleDecline(
+                                                                                     order.id
+                                                                                )
+                                                                           }
+                                                                           size={
+                                                                                "sm"
+                                                                           }
+                                                                           variant="destructive"
+                                                                           className={`hover:bg-red-500 transition ease-in-out `}
+                                                                      >
+                                                                           <BsFillPersonXFill />
+                                                                           Decline
+                                                                      </Button>
+                                                                      <Button
+                                                                           onClick={() =>
+                                                                                handleApprove(
+                                                                                     order.id
+                                                                                )
+                                                                           }
+                                                                           className={`${loading
                                                                                 ? "cursor-not-allowed disabled"
                                                                                 : ""
-                                                                      } hover:bg-sky-500 bg-sky-600 text-white font-sans `}
-                                                                      size={
-                                                                           "sm"
-                                                                      }
-                                                                 >
-                                                                      Approve
-                                                                 </Button>
-                                                            </>
-                                                       )}
+                                                                                } hover:bg-sky-500 bg-sky-600 text-white font-sans `}
+                                                                           size={
+                                                                                "sm"
+                                                                           }
+                                                                      >
+                                                                           Approve
+                                                                      </Button>
+                                                                 </>
+                                                            )}
                                                        {order.status ===
                                                             "APPROVED" && (
-                                                            <>
-                                                                 {" "}
-                                                                 <Button
-                                                                      onClick={() =>
-                                                                           setOrderId(
-                                                                                order.id
-                                                                           )
-                                                                      }
-                                                                      size={
-                                                                           "sm"
-                                                                      }
-                                                                      className=" text-center bg-sky-600 hover:bg-sky-400 text-white"
-                                                                 >
-                                                                      Schedule
-                                                                 </Button>{" "}
-                                                            </>
-                                                       )}
+                                                                 <>
+                                                                      {" "}
+                                                                      <Button
+                                                                           onClick={() =>
+                                                                                setOrderId(
+                                                                                     order.id
+                                                                                )
+                                                                           }
+                                                                           size={
+                                                                                "sm"
+                                                                           }
+                                                                           className=" text-center bg-sky-600 hover:bg-sky-400 text-white"
+                                                                      >
+                                                                           Schedule
+                                                                      </Button>{" "}
+                                                                 </>
+                                                            )}
 
                                                        {order.status ===
                                                             "DELIVERY" && (
-                                                            <>
-                                                                 {" "}
-                                                                 <span>
-                                                                      Delivery -{" "}
+                                                                 <>
+                                                                      {" "}
+                                                                      <span>
+                                                                           Delivery -{" "}
+                                                                           {
+                                                                                order.deliverySched
+                                                                           }
+                                                                      </span>
+                                                                      <Button
+                                                                           onClick={() =>
+                                                                                handleReceive(
+                                                                                     order.id
+                                                                                )
+                                                                           }
+                                                                           className={`bg-orange-600 text-white mt-3  font-semibold  ${loading
+                                                                                ? "cursor-not-allowed disabled:bg-gray-800"
+                                                                                : ""
+                                                                                }  `}
+                                                                           size={
+                                                                                "sm"
+                                                                           }
+                                                                      >
+                                                                           Order
+                                                                           recieved
+                                                                      </Button>
+                                                                 </>
+                                                            )}
+
+                                                       {order.status ===
+                                                            "HISTORY" && (
+                                                                 <span className="text-emerald-400">
+                                                                      Order received{" "}
+                                                                      <br />
                                                                       {
                                                                            order.deliverySched
                                                                       }
                                                                  </span>
-                                                                 <Button
-                                                                      onClick={() =>
-                                                                           handleReceive(
-                                                                                order.id
-                                                                           )
-                                                                      }
-                                                                      className={`bg-yellow-600 mt-3 text-black font-semibold  ${
-                                                                           loading
-                                                                                ? "cursor-not-allowed disabled:bg-gray-800"
-                                                                                : ""
-                                                                      }  `}
-                                                                      size={
-                                                                           "sm"
-                                                                      }
-                                                                 >
-                                                                      Order
-                                                                      recieved
-                                                                 </Button>
-                                                            </>
-                                                       )}
-
-                                                       {order.status ===
-                                                            "HISTORY" && (
-                                                            <span className="text-emerald-400">
-                                                                 Order received{" "}
-                                                                 <br />
-                                                                 {
-                                                                      order.deliverySched
-                                                                 }
-                                                            </span>
-                                                       )}
+                                                            )}
 
                                                        {order.status ===
                                                             "DECLINED" && (
-                                                            <p className=" text-red-400">
-                                                                 Declined order
-                                                            </p>
-                                                       )}
+                                                                 <p className=" text-red-400">
+                                                                      Declined order
+                                                                 </p>
+                                                            )}
                                                   </div>
                                              </TableCell>
                                         </TableRow>
