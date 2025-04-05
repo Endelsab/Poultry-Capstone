@@ -3,23 +3,23 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 export default async function AdminLayout({
-     children,
+    children,
 }: {
-     children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-     const user = await currentUser();
+    const user = await currentUser();
 
-     if (!user || user?.publicMetadata?.role !== "admin") {
-          redirect("/");
-     }
-     console.log("role in admin layout :", user?.publicMetadata?.role);
+    if (!user || user?.publicMetadata?.role !== "admin") {
+        redirect("/");
+    }
+    console.log("role in admin layout :", user?.publicMetadata?.role);
 
-     return (
-          <div className="flex flex-row gap-6  p-4 mr-10 mt-4">
-               <div className="ml-3 ">
-                    <Sidebar />
-               </div>
-               <div className=" ">{children}</div>
-          </div>
-     );
+    return (
+        <div className="flex flex-row gap-6  p-4 mr-10 mt-4">
+            <div className="ml-3 ">
+                <Sidebar />
+            </div>
+            <div className=" ">{children}</div>
+        </div>
+    );
 }
