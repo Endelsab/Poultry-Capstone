@@ -7,23 +7,23 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-     const user = await currentUser();
+    const user = await currentUser();
 
-     if (user) {
-          await SyncUser();
+    if (user) {
+        await SyncUser();
 
-          if (user?.publicMetadata?.role === "admin") {
-               redirect("/admin");
-          }
-     }
+        if (user?.publicMetadata?.role === "admin") {
+            redirect("/admin");
+        }
+    }
 
-     console.log("role in home :", user?.publicMetadata?.role);
+    console.log("role in home :", user?.publicMetadata?.role);
 
-     return (
-          <div className="flex flex-col gap-10">
-               <Main />
-               <ProductCard />
-               <Footer />
-          </div>
-     );
+    return (
+        <div className="flex flex-col gap-10">
+            <Main />
+            <ProductCard />
+            <Footer />
+        </div>
+    );
 }
